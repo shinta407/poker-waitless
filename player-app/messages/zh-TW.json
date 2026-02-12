@@ -1,0 +1,55 @@
+{
+  "common": {
+    "loading": "載入中...",
+    "error": "發生錯誤",
+    "cancel": "取消",
+    "confirm": "確認",
+    "close": "關閉"
+  },
+  "map": {
+    "title": "空位地圖",
+    "search": "搜尋店舖名稱",
+    "filter": {
+      "all": "全部",
+      "rate": "盲注"
+    },
+    "status": {
+      "green": "有空位",
+      "yellow": "稍候片刻",
+      "red": "擁擠中"
+    }
+  },
+  "store": {
+    "selectRate": "選擇盲注",
+    "waitlistStatus": "等候狀況",
+    "waitingCount": "等候人數：{count}人",
+    "estimatedWait": "預估等候時間：{time}分鐘",
+    "arrivalTime": "抵達時間",
+    "checkIn": "報到",
+    "arrivalOptions": {
+      "15min": "15分鐘後",
+      "30min": "30分鐘後",
+      "45min": "45分鐘後",
+      "60min": "1小時後"
+    }
+  },
+  "status": {
+    "title": "我的狀態",
+    "currentPosition": "目前等候順位",
+    "position": "第{position}位",
+    "estimatedCall": "預計叫號：{time}",
+    "notification": "LINE通知：已啟用",
+    "cancelButton": "取消",
+    "called": {
+      "title": "輪到您了！",
+      "message": "請前往店舖"
+    }
+  },
+  "guide": {
+    "title": "使用指南",
+    "step1": "1. 在地圖畫面尋找店舖",
+    "step2": "2. 選擇盲注和抵達時間後報到",
+    "step3": "3. 在我的狀態確認順位",
+    "step4": "4. 收到LINE通知後前往店舖"
+  }
+}

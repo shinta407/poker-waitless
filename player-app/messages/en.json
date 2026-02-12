@@ -1,0 +1,55 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "map": {
+    "title": "Available Seats Map",
+    "search": "Search by store name",
+    "filter": {
+      "all": "All",
+      "rate": "Rate"
+    },
+    "status": {
+      "green": "Seats Available",
+      "yellow": "Short Wait",
+      "red": "Crowded"
+    }
+  },
+  "store": {
+    "selectRate": "Select Rate",
+    "waitlistStatus": "Waitlist Status",
+    "waitingCount": "Waiting: {count} people",
+    "estimatedWait": "Estimated wait: {time} min",
+    "arrivalTime": "Arrival Time",
+    "checkIn": "Check In",
+    "arrivalOptions": {
+      "15min": "15 min",
+      "30min": "30 min",
+      "45min": "45 min",
+      "60min": "1 hour"
+    }
+  },
+  "status": {
+    "title": "My Status",
+    "currentPosition": "Current Position",
+    "position": "#{position}",
+    "estimatedCall": "Estimated call: {time}",
+    "notification": "LINE notification: Enabled",
+    "cancelButton": "Cancel",
+    "called": {
+      "title": "Your turn!",
+      "message": "Please go to the store"
+    }
+  },
+  "guide": {
+    "title": "How to Use",
+    "step1": "1. Find a store on the MAP",
+    "step2": "2. Select rate and arrival time, then check in",
+    "step3": "3. Check your position in My Status",
+    "step4": "4. Go to the store when notified via LINE"
+  }
+}
