@@ -1,14 +1,25 @@
-import createMiddleware from 'next-intl/middleware'
+// next-intlのミドルウェアを一時的に無効化（デモ版用）
+// LIFF統合時に再度有効化予定
 
-export default createMiddleware({
-  // サポートするロケール
-  locales: ['ja', 'zh-TW', 'en'],
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-  // デフォルトロケール
-  defaultLocale: 'zh-TW'
-})
+export function middleware(request: NextRequest) {
+  return NextResponse.next()
+}
 
 export const config = {
-  // i18nルーティングを適用するパス
-  matcher: ['/', '/(ja|zh-TW|en)/:path*']
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)']
 }
+
+// --- LIFF統合時に以下を使用 ---
+// import createMiddleware from 'next-intl/middleware'
+//
+// export default createMiddleware({
+//   locales: ['ja', 'zh-TW', 'en'],
+//   defaultLocale: 'zh-TW'
+// })
+//
+// export const config = {
+//   matcher: ['/', '/(ja|zh-TW|en)/:path*']
+// }
