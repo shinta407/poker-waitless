@@ -1,8 +1,7 @@
 import { getRequestConfig } from 'next-intl/server'
 
-export default getRequestConfig(async () => {
-  // デフォルトは中国語（繁体字）
-  const locale = 'zh-TW'
+export default getRequestConfig(async ({ requestLocale }) => {
+  const locale = (await requestLocale) || 'zh-TW'
 
   return {
     locale,

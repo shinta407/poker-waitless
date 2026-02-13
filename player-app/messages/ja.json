@@ -4,11 +4,15 @@
     "error": "エラーが発生しました",
     "cancel": "キャンセル",
     "confirm": "確認",
-    "close": "閉じる"
+    "close": "閉じる",
+    "back": "← 戻る",
+    "mockMode": "🎭 モックモード"
   },
   "map": {
     "title": "空席マップ",
     "search": "店舗名で検索",
+    "storeList": "店舗リスト",
+    "noStoresFound": "該当する店舗が見つかりません",
     "filter": {
       "all": "すべて",
       "rate": "レート"
@@ -23,9 +27,14 @@
     "selectRate": "レートを選択",
     "waitlistStatus": "待ち状況",
     "waitingCount": "待ち人数: {count}人",
+    "peopleWaiting": "{count}人待ち",
     "estimatedWait": "予測待ち時間: {time}分",
+    "estimatedWaitRange": "{min}-{max}分",
+    "minutesLater": "{minutes}分後",
     "arrivalTime": "到着時間",
     "checkIn": "チェックイン",
+    "checkInFailed": "チェックインに失敗しました",
+    "storeInfo": "📍 {city} | 🕐 {hours}",
     "arrivalOptions": {
       "15min": "15分後",
       "30min": "30分後",
@@ -37,9 +46,14 @@
     "title": "マイステータス",
     "currentPosition": "現在の待ち順位",
     "position": "#{position}",
+    "almostYourTurn": "もうすぐ順番です！",
     "estimatedCall": "呼び出し予測: {time}",
+    "estimatedCallTime": "🕐 呼び出し予測時刻",
+    "estimateDisclaimer": "※ 目安です",
     "notification": "LINE通知: 有効",
+    "notificationEnabled": "LINE通知: 有効",
     "cancelButton": "キャンセル",
+    "cancelSuccess": "キャンセルしました",
     "called": {
       "title": "順番が来ました！",
       "message": "店舗にお越しください"
@@ -48,8 +62,22 @@
   "guide": {
     "title": "使い方ガイド",
     "step1": "1. MAP画面で店舗を探す",
+    "step1Description": "空席マップで近くのポーカー店を確認",
     "step2": "2. レートと到着時間を選択してチェックイン",
+    "step2Description": "プレイしたいレートと到着予定時刻を選択",
     "step3": "3. マイステータスで順番を確認",
-    "step4": "4. LINE通知が来たら店舗へ"
+    "step3Description": "リアルタイムで待ち順位を確認できます",
+    "step4": "4. LINE通知が来たら店舗へ",
+    "step4Description": "もうすぐ順番になるとLINE通知が届きます",
+    "trafficLightTitle": "信号機の見方",
+    "greenDescription": "🟢 空席あり：すぐに座れます",
+    "yellowDescription": "🟡 少し待ち：3人以内の待ち",
+    "redDescription": "🔴 混雑中：4人以上待ち"
+  },
+  "language": {
+    "select": "言語を選択",
+    "ja": "日本語",
+    "zh-TW": "繁體中文",
+    "en": "English"
   }
 }

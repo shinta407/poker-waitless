@@ -4,11 +4,15 @@
     "error": "發生錯誤",
     "cancel": "取消",
     "confirm": "確認",
-    "close": "關閉"
+    "close": "關閉",
+    "back": "← 返回",
+    "mockMode": "🎭 模擬模式"
   },
   "map": {
     "title": "空位地圖",
     "search": "搜尋店舖名稱",
+    "storeList": "店舖列表",
+    "noStoresFound": "找不到符合條件的店舖",
     "filter": {
       "all": "全部",
       "rate": "盲注"
@@ -23,9 +27,14 @@
     "selectRate": "選擇盲注",
     "waitlistStatus": "等候狀況",
     "waitingCount": "等候人數：{count}人",
+    "peopleWaiting": "{count}人等候",
     "estimatedWait": "預估等候時間：{time}分鐘",
+    "estimatedWaitRange": "{min}-{max}分鐘",
+    "minutesLater": "{minutes}分鐘後",
     "arrivalTime": "抵達時間",
     "checkIn": "報到",
+    "checkInFailed": "報到失敗",
+    "storeInfo": "📍 {city} | 🕐 {hours}",
     "arrivalOptions": {
       "15min": "15分鐘後",
       "30min": "30分鐘後",
@@ -37,9 +46,14 @@
     "title": "我的狀態",
     "currentPosition": "目前等候順位",
     "position": "第{position}位",
+    "almostYourTurn": "即將輪到您！",
     "estimatedCall": "預計叫號：{time}",
+    "estimatedCallTime": "🕐 預計叫號時間",
+    "estimateDisclaimer": "※ 僅供參考",
     "notification": "LINE通知：已啟用",
+    "notificationEnabled": "LINE通知：已啟用",
     "cancelButton": "取消",
+    "cancelSuccess": "已取消",
     "called": {
       "title": "輪到您了！",
       "message": "請前往店舖"
@@ -48,8 +62,22 @@
   "guide": {
     "title": "使用指南",
     "step1": "1. 在地圖畫面尋找店舖",
+    "step1Description": "在空位地圖上查看附近的撲克店",
     "step2": "2. 選擇盲注和抵達時間後報到",
+    "step2Description": "選擇您想玩的盲注及預計抵達時間",
     "step3": "3. 在我的狀態確認順位",
-    "step4": "4. 收到LINE通知後前往店舖"
+    "step3Description": "即時查看您的等候順位",
+    "step4": "4. 收到LINE通知後前往店舖",
+    "step4Description": "快輪到時會收到LINE通知",
+    "trafficLightTitle": "信號燈說明",
+    "greenDescription": "🟢 有空位：可立即入座",
+    "yellowDescription": "🟡 稍候片刻：3人以內等候",
+    "redDescription": "🔴 擁擠中：4人以上等候"
+  },
+  "language": {
+    "select": "選擇語言",
+    "ja": "日本語",
+    "zh-TW": "繁體中文",
+    "en": "English"
   }
 }

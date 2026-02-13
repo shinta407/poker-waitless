@@ -1,6 +1,7 @@
 'use client'
 
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps'
+import { useTranslations } from 'next-intl'
 import type { StoreWithStatus } from '@/lib/types'
 
 interface MapViewProps {
@@ -10,19 +11,33 @@ interface MapViewProps {
 }
 
 export default function MapView({ stores, center, onStoreClick }: MapViewProps) {
+  const t = useTranslations('map.status')
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
-  const defaultCenter = center || { lat: 25.0330, lng: 121.5654 } // 台北市中心
+  const defaultCenter = center || { lat: 25.0330, lng: 121.5654 }
 
   const getMarkerColor = (status: StoreWithStatus['status']) => {
     switch (status) {
       case 'green':
-        return '#22c55e' // green-500
+        return '#10b981'
       case 'yellow':
-        return '#eab308' // yellow-500
+        return '#f59e0b'
       case 'red':
-        return '#ef4444' // red-500
+        return '#ef4444'
       default:
-        return '#6b7280' // gray-500
+        return '#6b7280'
+    }
+  }
+
+  const getStatusLabel = (status: StoreWithStatus['status']) => {
+    switch (status) {
+      case 'green':
+        return t('green')
+      case 'yellow':
+        return t('yellow')
+      case 'red':
+        return t('red')
+      default:
+        return ''
     }
   }
 
@@ -36,20 +51,27 @@ export default function MapView({ stores, center, onStoreClick }: MapViewProps) 
         disableDefaultUI={false}
         mapId="tpds-map"
       >
-        {stores.map((store) => (
-          <AdvancedMarker
-            key={store.id}
-            position={store.location}
-            onClick={() => onStoreClick?.(store.id)}
-          >
-            <Pin
-              background={getMarkerColor(store.status)}
-              borderColor="#fff"
-              glyphColor="#fff"
-              scale={1.2}
-            />
-          </AdvancedMarker>
-        ))}
+        {stores.map((store) => {
+          const waitingCount = store.waitlist.filter(w => w.status === 'waiting').length
+          const statusLabel = getStatusLabel(store.status)
+          const markerTitle = `${store.name} - ${statusLabel} - ${waitingCount}人待ち`
+
+          return (
+            <AdvancedMarker
+              key={store.id}
+              position={store.location}
+              onClick={() => onStoreClick?.(store.id)}
+              title={markerTitle}
+            >
+              <Pin
+                background={getMarkerColor(store.status)}
+                borderColor="#fff"
+                glyphColor="#fff"
+                scale={1.2}
+              />
+            </AdvancedMarker>
+          )
+        })}
       </Map>
     </APIProvider>
   )

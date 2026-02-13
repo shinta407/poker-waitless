@@ -4,11 +4,15 @@
     "error": "An error occurred",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "close": "Close"
+    "close": "Close",
+    "back": "← Back",
+    "mockMode": "🎭 Mock Mode"
   },
   "map": {
     "title": "Available Seats Map",
     "search": "Search by store name",
+    "storeList": "Store List",
+    "noStoresFound": "No stores found",
     "filter": {
       "all": "All",
       "rate": "Rate"
@@ -23,9 +27,14 @@
     "selectRate": "Select Rate",
     "waitlistStatus": "Waitlist Status",
     "waitingCount": "Waiting: {count} people",
+    "peopleWaiting": "{count} people waiting",
     "estimatedWait": "Estimated wait: {time} min",
+    "estimatedWaitRange": "{min}-{max} min",
+    "minutesLater": "{minutes} min later",
     "arrivalTime": "Arrival Time",
     "checkIn": "Check In",
+    "checkInFailed": "Check-in failed",
+    "storeInfo": "📍 {city} | 🕐 {hours}",
     "arrivalOptions": {
       "15min": "15 min",
       "30min": "30 min",
@@ -37,9 +46,14 @@
     "title": "My Status",
     "currentPosition": "Current Position",
     "position": "#{position}",
+    "almostYourTurn": "Almost your turn!",
     "estimatedCall": "Estimated call: {time}",
+    "estimatedCallTime": "🕐 Estimated call time",
+    "estimateDisclaimer": "※ Estimate only",
     "notification": "LINE notification: Enabled",
+    "notificationEnabled": "LINE notification: Enabled",
     "cancelButton": "Cancel",
+    "cancelSuccess": "Canceled",
     "called": {
       "title": "Your turn!",
       "message": "Please go to the store"
@@ -48,8 +62,22 @@
   "guide": {
     "title": "How to Use",
     "step1": "1. Find a store on the MAP",
+    "step1Description": "View nearby poker stores on the availability map",
     "step2": "2. Select rate and arrival time, then check in",
+    "step2Description": "Choose your preferred rate and estimated arrival time",
     "step3": "3. Check your position in My Status",
-    "step4": "4. Go to the store when notified via LINE"
+    "step3Description": "Track your waitlist position in real-time",
+    "step4": "4. Go to the store when notified via LINE",
+    "step4Description": "Receive a LINE notification when it's almost your turn",
+    "trafficLightTitle": "Traffic Light Guide",
+    "greenDescription": "🟢 Seats Available: You can be seated immediately",
+    "yellowDescription": "🟡 Short Wait: 3 or fewer people waiting",
+    "redDescription": "🔴 Crowded: 4 or more people waiting"
+  },
+  "language": {
+    "select": "Select Language",
+    "ja": "日本語",
+    "zh-TW": "繁體中文",
+    "en": "English"
   }
 }

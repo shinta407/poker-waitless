@@ -6,22 +6,26 @@ import { useTranslations } from 'next-intl'
 import type { WaitlistEntry } from '@/lib/types'
 import { useRealtimeStore } from '@/hooks/useRealtimeStore'
 import { getMockUser, supabase } from '@/lib/supabase'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
+import { Loader } from '@/components/ui/Loader'
+import { IconButton } from '@/components/ui/IconButton'
 
 export default function StoreDetailPage() {
   const params = useParams()
   const router = useRouter()
   const t = useTranslations('store')
+  const tCommon = useTranslations('common')
   const storeId = params.storeId as string
 
   const [selectedRate, setSelectedRate] = useState<string>('')
   const [arrivalTime, setArrivalTime] = useState<number>(15)
 
-  // リアルタイムフック使用
   const { store, waitlist, loading } = useRealtimeStore(storeId, selectedRate)
 
   useEffect(() => {
     if (store && !selectedRate) {
-      setSelectedRate(store.rates[0]) // デフォルトで最初のレート
+      setSelectedRate(store.rates[0])
     }
   }, [store, selectedRate])
 
@@ -30,7 +34,6 @@ export default function StoreDetailPage() {
     const useMockMode = process.env.NEXT_PUBLIC_USE_MOCK_MODE === 'true'
 
     if (useMockMode) {
-      // モックモード
       const newEntry: WaitlistEntry = {
         id: `wait-${Date.now()}`,
         store_id: storeId,
@@ -46,7 +49,6 @@ export default function StoreDetailPage() {
       console.log('✅ チェックイン成功（モック）:', newEntry)
       router.push(`/status/${newEntry.id}`)
     } else {
-      // 本番モード: Supabaseに保存
       try {
         const { data, error } = await supabase
           .from('waitlist')
@@ -67,108 +69,112 @@ export default function StoreDetailPage() {
         router.push(`/status/${data.id}`)
       } catch (error) {
         console.error('❌ チェックインエラー:', error)
-        alert('チェックインに失敗しました')
+        alert(t('checkInFailed'))
       }
     }
   }
 
   if (loading || !store) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl">読み込み中...</div>
-      </div>
-    )
+    return <Loader fullScreen text={tCommon('loading')} />
   }
 
   const waitingCount = waitlist.length
+  const minWait = waitingCount * 15
+  const maxWait = waitingCount * 30
+
+  const arrivalOptions = [
+    { minutes: 15, key: '15min' as const },
+    { minutes: 30, key: '30min' as const },
+    { minutes: 45, key: '45min' as const },
+    { minutes: 60, key: '60min' as const }
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ヘッダー */}
       <div className="bg-white border-b p-4">
-        <button
-          onClick={() => router.back()}
-          className="text-blue-500 mb-2"
-        >
-          ← 戻る
-        </button>
-        <h1 className="text-2xl font-bold text-gray-800">{store.name}</h1>
-        <div className="text-gray-600 mt-1">
-          📍 台北市 | 🕐 12:00-24:00
+        <div className="flex items-center gap-3 mb-3">
+          <IconButton
+            icon={
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            }
+            onClick={() => router.back()}
+            aria-label={tCommon('back')}
+            variant="default"
+            size="md"
+          />
+          <h1 className="text-2xl font-bold text-gray-800">{store.name}</h1>
+        </div>
+        <div className="text-gray-600">
+          {t('storeInfo', { city: '台北市', hours: '12:00-24:00' })}
         </div>
       </div>
 
       <div className="p-4 space-y-6">
-        {/* レート選択 */}
         <div>
           <h2 className="text-lg font-bold text-gray-700 mb-3">
             {t('selectRate')}
           </h2>
           <div className="flex gap-3">
             {store.rates.map(rate => (
-              <button
+              <Button
                 key={rate}
                 onClick={() => setSelectedRate(rate)}
-                className={`flex-1 py-4 rounded-lg font-bold text-lg ${
-                  selectedRate === rate
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-700'
-                }`}
+                variant={selectedRate === rate ? 'primary' : 'secondary'}
+                size="lg"
+                fullWidth
+                aria-label={`${t('selectRate')}: ${rate}`}
               >
                 {rate}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
-        {/* 待ち状況 */}
-        <div className="bg-white rounded-lg p-4">
+        <Card padding="lg">
           <h2 className="text-lg font-bold text-gray-700 mb-3">
             {t('waitlistStatus')} ({selectedRate})
           </h2>
           <div className="space-y-2">
             <div className="text-3xl font-bold text-blue-600">
-              {waitingCount}人待ち
+              {t('peopleWaiting', { count: waitingCount })}
             </div>
             <div className="text-gray-600">
-              予測待ち時間: {waitingCount * 15}-{waitingCount * 30}分
+              {t('estimatedWait', { time: `${minWait}-${maxWait}` })}
             </div>
           </div>
-        </div>
+        </Card>
 
-        {/* 到着時間選択 */}
         <div>
           <h2 className="text-lg font-bold text-gray-700 mb-3">
             {t('arrivalTime')}
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            {[15, 30, 45, 60].map(minutes => (
-              <button
+            {arrivalOptions.map(({ minutes, key }) => (
+              <Button
                 key={minutes}
                 onClick={() => setArrivalTime(minutes)}
-                className={`py-4 rounded-lg font-bold ${
-                  arrivalTime === minutes
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-700'
-                }`}
+                variant={arrivalTime === minutes ? 'primary' : 'secondary'}
+                size="lg"
+                aria-label={`${t('arrivalTime')}: ${t(`arrivalOptions.${key}`)}`}
               >
-                {minutes}分後
-              </button>
+                {t(`arrivalOptions.${key}`)}
+              </Button>
             ))}
           </div>
         </div>
 
-        {/* チェックインボタン */}
-        <button
+        <Button
           onClick={handleCheckIn}
           disabled={!selectedRate}
-          className="w-full bg-green-500 hover:bg-green-600 text-white
-                     py-6 rounded-xl font-bold text-2xl
-                     disabled:bg-gray-300 disabled:cursor-not-allowed
-                     transition-all active:scale-95"
+          variant="primary"
+          size="xl"
+          fullWidth
+          className="!bg-green-500 hover:!bg-green-600"
         >
           {t('checkIn')}
-        </button>
+        </Button>
       </div>
     </div>
   )
