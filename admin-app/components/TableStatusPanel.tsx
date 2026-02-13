@@ -1,3 +1,6 @@
+'use client'
+
+import { Minus, Plus } from 'lucide-react'
 import { type Table } from '@/lib/supabase'
 
 interface TableStatusPanelProps {
@@ -17,21 +20,24 @@ export default function TableStatusPanel({ tables, onUpdateSeats }: TableStatusP
       </h2>
 
       {/* Summary Stats */}
-      <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
+      <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200" role="region" aria-label="座席統計">
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between items-center">
             <span className="text-xl text-gray-700">合計使用席:</span>
-            <span className="text-3xl font-bold text-blue-600">
+            <span className="text-3xl font-bold text-blue-600" aria-label={`合計 ${totalSeats}席のうち${totalOccupied}席使用中`}>
               {totalOccupied} / {totalSeats}
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xl text-gray-700">空き席:</span>
-            <span className={`text-3xl font-bold ${
-              availableSeats > 5 ? 'text-green-600' :
-              availableSeats > 0 ? 'text-yellow-600' :
-              'text-red-600'
-            }`}>
+            <span
+              className={`text-3xl font-bold ${
+                availableSeats > 5 ? 'text-green-600' :
+                availableSeats > 0 ? 'text-amber-600' :
+                'text-red-600'
+              }`}
+              aria-label={`${availableSeats}席空き`}
+            >
               {availableSeats}席
             </span>
           </div>
@@ -39,7 +45,7 @@ export default function TableStatusPanel({ tables, onUpdateSeats }: TableStatusP
       </div>
 
       {/* Table List */}
-      <div className="space-y-4">
+      <div className="space-y-4" role="table" aria-label="卓一覧">
         {tables.length === 0 ? (
           <div className="text-center py-12 text-gray-400 text-2xl">
             卓情報がありません
@@ -70,10 +76,14 @@ function TableRow({ table, tableNumber, onUpdateSeats }: TableRowProps) {
   const isEmpty = table.current_players === 0
 
   return (
-    <div className={`
-      rounded-xl p-5 shadow-md border-2
-      ${isFull ? 'bg-red-50 border-red-300' : 'bg-white border-gray-200'}
-    `}>
+    <div
+      className={`
+        rounded-xl p-5 shadow-md border-2
+        ${isFull ? 'bg-red-50 border-red-300' : 'bg-white border-gray-200'}
+      `}
+      role="row"
+      aria-label={`卓${tableNumber}、${table.rate}、${table.current_players}/${table.max_seats}席使用中`}
+    >
       {/* Table Name */}
       <div className="mb-3">
         <h3 className="text-2xl font-bold text-gray-800">
@@ -90,26 +100,33 @@ function TableRow({ table, tableNumber, onUpdateSeats }: TableRowProps) {
           className={`
             w-20 h-20 rounded-xl font-bold text-4xl
             transition-all active:scale-90 shadow-md
+            flex items-center justify-center
+            focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-red-500 focus-visible:ring-offset-2
             ${
               isEmpty
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-red-500 hover:bg-red-600 text-white'
+                : 'bg-red-500 hover:bg-red-600 text-white cursor-pointer'
             }
           `}
+          aria-label={`卓${tableNumber}の席を減らす`}
+          aria-disabled={isEmpty}
         >
-          −
+          <Minus className="w-8 h-8" aria-hidden="true" />
         </button>
 
         {/* Seat Count Display */}
         <div className="flex-1 text-center">
-          <span className={`text-5xl font-bold ${
-            isFull ? 'text-red-600' :
-            table.current_players > table.max_seats * 0.7 ? 'text-yellow-600' :
-            'text-green-600'
-          }`}>
+          <span
+            className={`text-5xl font-bold ${
+              isFull ? 'text-red-600' :
+              table.current_players > table.max_seats * 0.7 ? 'text-amber-600' :
+              'text-green-600'
+            }`}
+            aria-label={`現在${table.current_players}名`}
+          >
             {table.current_players}
           </span>
-          <span className="text-3xl text-gray-400 font-semibold">
+          <span className="text-3xl text-gray-400 font-semibold" aria-hidden="true">
             {' '}/{' '}{table.max_seats}
           </span>
         </div>
@@ -121,14 +138,18 @@ function TableRow({ table, tableNumber, onUpdateSeats }: TableRowProps) {
           className={`
             w-20 h-20 rounded-xl font-bold text-4xl
             transition-all active:scale-90 shadow-md
+            flex items-center justify-center
+            focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-green-500 focus-visible:ring-offset-2
             ${
               isFull
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-green-500 hover:bg-green-600 text-white'
+                : 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
             }
           `}
+          aria-label={`卓${tableNumber}の席を増やす`}
+          aria-disabled={isFull}
         >
-          +
+          <Plus className="w-8 h-8" aria-hidden="true" />
         </button>
       </div>
     </div>
