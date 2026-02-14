@@ -291,7 +291,7 @@ export default function AdminPage() {
 
         console.log('✅ Player seated:', playerId)
         const player = waitlist.find(p => p.id === playerId)
-        toast.success(`${player?.user_name}さんをテーブルに着席させました`)
+        toast.success(tToast('playerSeated', { name: player?.user_name || '' }))
       } catch (err) {
         console.error('❌ Error seating player:', err)
         toast.error(t('toast.seatFailed'))
@@ -376,7 +376,7 @@ export default function AdminPage() {
 
         if (error) throw error
 
-        toast.success(`${name}を追加しました`)
+        toast.success(tToast('playerAdded', { name }))
         // Real-time subscription will update UI automatically
       }
     } catch (error) {
@@ -416,7 +416,7 @@ export default function AdminPage() {
 
         if (insertError) throw insertError
 
-        toast.success(`${userData.name}を追加しました`)
+        toast.success(tToast('playerAdded', { name: userData.name }))
       }
     } catch (error) {
       console.error('Error scanning QR:', error)
