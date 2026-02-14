@@ -30,7 +30,14 @@ export default function MapPage() {
     })
   }, [stores, searchQuery, selectedRate])
 
-  const rates = ['1/3', '2/5', '5/10+', '10/20']
+  // すべての店舗のレートを動的に取得
+  const rates = useMemo(() => {
+    const allRates = new Set<string>()
+    stores.forEach(store => {
+      store.rates.forEach(rate => allRates.add(rate))
+    })
+    return Array.from(allRates).sort()
+  }, [stores])
 
   if (loading) {
     return <Loader fullScreen text={tCommon('loading')} />
