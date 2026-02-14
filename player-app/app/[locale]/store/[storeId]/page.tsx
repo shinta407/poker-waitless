@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Loader } from '@/components/ui/Loader'
 import { IconButton } from '@/components/ui/IconButton'
+import { Input } from '@/components/ui/Input'
 
 export default function StoreDetailPage() {
   const params = useParams()
@@ -20,6 +21,8 @@ export default function StoreDetailPage() {
 
   const [selectedRate, setSelectedRate] = useState<string>('')
   const [arrivalTime, setArrivalTime] = useState<number>(15)
+  const [playerName, setPlayerName] = useState<string>('')
+  const [playerNameError, setPlayerNameError] = useState<string>('')
 
   const { store, waitlist, loading } = useRealtimeStore(storeId, selectedRate)
 
@@ -29,16 +32,44 @@ export default function StoreDetailPage() {
     }
   }, [store, selectedRate])
 
+  const MAX_PLAYER_NAME_LENGTH = 20
+
+  const validatePlayerName = (name: string): string => {
+    const trimmedName = name.trim()
+    if (!trimmedName) {
+      return t('playerNameRequired')
+    }
+    if (trimmedName.length > MAX_PLAYER_NAME_LENGTH) {
+      return t('playerNameTooLong', { max: MAX_PLAYER_NAME_LENGTH })
+    }
+    return ''
+  }
+
+  const handlePlayerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setPlayerName(value)
+    if (playerNameError) {
+      setPlayerNameError('')
+    }
+  }
+
   const handleCheckIn = async () => {
-    const user = getMockUser()
+    // Validate player name
+    const error = validatePlayerName(playerName)
+    if (error) {
+      setPlayerNameError(error)
+      return
+    }
+
+    const trimmedPlayerName = playerName.trim()
     const useMockMode = process.env.NEXT_PUBLIC_USE_MOCK_MODE === 'true'
 
     if (useMockMode) {
       const newEntry: WaitlistEntry = {
         id: `wait-${Date.now()}`,
         store_id: storeId,
-        user_id: user.userId,
-        user_name: user.displayName,
+        user_id: `user_${Date.now()}`,
+        user_name: trimmedPlayerName,
         rate_preference: selectedRate,
         status: 'waiting',
         called_at: null,
@@ -54,8 +85,8 @@ export default function StoreDetailPage() {
           .from('waitlist')
           .insert({
             store_id: storeId,
-            user_id: user.userId,
-            user_name: user.displayName,
+            user_id: `user_${Date.now()}`,
+            user_name: trimmedPlayerName,
             rate_preference: selectedRate,
             arrival_estimation_minutes: arrivalTime,
             status: 'waiting',
@@ -147,6 +178,18 @@ export default function StoreDetailPage() {
         </Card>
 
         <div>
+          <Input
+            label={t('playerName')}
+            placeholder={t('playerNamePlaceholder')}
+            value={playerName}
+            onChange={handlePlayerNameChange}
+            error={playerNameError}
+            maxLength={MAX_PLAYER_NAME_LENGTH}
+            aria-required="true"
+          />
+        </div>
+
+        <div>
           <h2 className="text-lg font-bold text-gray-700 mb-3">
             {t('arrivalTime')}
           </h2>
@@ -167,7 +210,7 @@ export default function StoreDetailPage() {
 
         <Button
           onClick={handleCheckIn}
-          disabled={!selectedRate}
+          disabled={!selectedRate || !playerName.trim()}
           variant="primary"
           size="xl"
           fullWidth

@@ -1,0 +1,88 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "发生错误",
+    "cancel": "取消",
+    "confirm": "确认",
+    "close": "关闭",
+    "back": "← 返回",
+    "mockMode": "🎭 模拟模式"
+  },
+  "map": {
+    "title": "空位地图",
+    "search": "搜索店铺名称",
+    "storeList": "店铺列表",
+    "noStoresFound": "找不到符合条件的店铺",
+    "filter": {
+      "all": "全部",
+      "rate": "盲注"
+    },
+    "status": {
+      "green": "有空位",
+      "yellow": "稍候片刻",
+      "red": "拥挤中"
+    }
+  },
+  "store": {
+    "selectRate": "选择盲注",
+    "waitlistStatus": "等候状况",
+    "waitingCount": "等候人数：{count}人",
+    "peopleWaiting": "{count}人等候",
+    "estimatedWait": "预估等候时间：{time}分钟",
+    "estimatedWaitRange": "{min}-{max}分钟",
+    "minutesLater": "{minutes}分钟后",
+    "arrivalTime": "抵达时间",
+    "checkIn": "报到",
+    "checkInFailed": "报到失败",
+    "storeInfo": "📍 {city} | 🕐 {hours}",
+    "arrivalOptions": {
+      "15min": "15分钟后",
+      "30min": "30分钟后",
+      "45min": "45分钟后",
+      "60min": "1小时后"
+    },
+    "playerName": "玩家名称",
+    "playerNamePlaceholder": "请输入您的名称",
+    "playerNameRequired": "请输入玩家名称",
+    "playerNameTooLong": "名称最多{max}个字"
+  },
+  "status": {
+    "title": "我的状态",
+    "currentPosition": "目前等候顺位",
+    "position": "第{position}位",
+    "almostYourTurn": "即将轮到您！",
+    "estimatedCall": "预计叫号：{time}",
+    "estimatedCallTime": "🕐 预计叫号时间",
+    "estimateDisclaimer": "※ 仅供参考",
+    "notification": "LINE通知：已启用",
+    "notificationEnabled": "LINE通知：已启用",
+    "cancelButton": "取消",
+    "cancelSuccess": "已取消",
+    "called": {
+      "title": "轮到您了！",
+      "message": "请前往店铺"
+    }
+  },
+  "guide": {
+    "title": "使用指南",
+    "step1": "1. 在地图画面寻找店铺",
+    "step1Description": "在空位地图上查看附近的扑克店",
+    "step2": "2. 选择盲注和抵达时间后报到",
+    "step2Description": "选择您想玩的盲注及预计抵达时间",
+    "step3": "3. 在我的状态确认顺位",
+    "step3Description": "即时查看您的等候顺位",
+    "step4": "4. 收到LINE通知后前往店铺",
+    "step4Description": "快轮到时会收到LINE通知",
+    "trafficLightTitle": "信号灯说明",
+    "greenDescription": "🟢 有空位：可立即入座",
+    "yellowDescription": "🟡 稍候片刻：3人以内等候",
+    "redDescription": "🔴 拥挤中：4人以上等候"
+  },
+  "language": {
+    "select": "选择语言",
+    "ja": "日本語",
+    "zh-TW": "繁體中文",
+    "zh-CN": "简体中文",
+    "en": "English"
+  }
+}

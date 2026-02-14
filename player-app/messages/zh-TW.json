@@ -40,7 +40,11 @@
       "30min": "30分鐘後",
       "45min": "45分鐘後",
       "60min": "1小時後"
-    }
+    },
+    "playerName": "玩家名稱",
+    "playerNamePlaceholder": "請輸入您的名稱",
+    "playerNameRequired": "請輸入玩家名稱",
+    "playerNameTooLong": "名稱最多{max}個字"
   },
   "status": {
     "title": "我的狀態",
@@ -78,6 +82,7 @@
     "select": "選擇語言",
     "ja": "日本語",
     "zh-TW": "繁體中文",
+    "zh-CN": "简体中文",
     "en": "English"
   }
 }

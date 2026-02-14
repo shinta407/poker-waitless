@@ -40,7 +40,11 @@
       "30min": "30分後",
       "45min": "45分後",
       "60min": "1時間後"
-    }
+    },
+    "playerName": "プレイヤー名",
+    "playerNamePlaceholder": "お名前を入力してください",
+    "playerNameRequired": "プレイヤー名を入力してください",
+    "playerNameTooLong": "名前は{max}文字以内で入力してください"
   },
   "status": {
     "title": "マイステータス",
@@ -78,6 +82,7 @@
     "select": "言語を選択",
     "ja": "日本語",
     "zh-TW": "繁體中文",
+    "zh-CN": "简体中文",
     "en": "English"
   }
 }

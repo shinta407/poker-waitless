@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Poker Waitless - プレイヤー向けアプリ',
-  description: 'ポーカーの待ち時間を快適に。店舗検索、待機状況、ゲーム案内',
+  title: 'Poker Waitless - 撲克等候系統',
+  description: '線上撲克等候系統，即時查看店家空位狀況',
   icons: {
     icon: '/favicon.ico',
   },
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html>
+    <html lang="zh-TW">
       <body>{children}</body>
     </html>
   )

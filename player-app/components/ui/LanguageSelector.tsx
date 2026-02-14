@@ -3,12 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-
-const languages = [
-  { code: 'zh-TW', label: '繁體中文', flag: '🇹🇼' },
-  { code: 'ja', label: '日本語', flag: '🇯🇵' },
-  { code: 'en', label: 'English', flag: '🇺🇸' }
-]
+import { languages, defaultLocale, localePattern } from '@/lib/i18n-config'
 
 export function LanguageSelector() {
   const t = useTranslations('language')
@@ -46,10 +41,10 @@ export function LanguageSelector() {
     setIsOpen(false)
 
     // Remove current locale from pathname if present
-    const pathnameWithoutLocale = pathname.replace(/^\/(ja|zh-TW|en)/, '') || '/'
+    const pathnameWithoutLocale = pathname.replace(localePattern, '') || '/'
 
     // Add new locale to pathname if not default
-    const newPath = langCode === 'zh-TW'
+    const newPath = langCode === defaultLocale
       ? pathnameWithoutLocale
       : `/${langCode}${pathnameWithoutLocale}`
 
