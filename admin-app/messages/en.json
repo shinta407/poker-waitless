@@ -1,0 +1,136 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "update": "Update",
+    "save": "Save",
+    "success": "Success",
+    "store": "Store"
+  },
+  "settings": {
+    "title": "Settings",
+    "buyInSettings": "Buy-in Settings",
+    "tablesSettings": "Tables Management",
+    "openSettings": "Open Settings"
+  },
+  "buyIn": {
+    "title": "Buy-in",
+    "add": "Add Buy-in",
+    "edit": "Edit Buy-in",
+    "delete": "Delete Buy-in",
+    "deleteConfirm": "Are you sure you want to delete buy-in \"{buyIn}\"?",
+    "amount": "Amount (numbers only)",
+    "amountPlaceholder": "e.g., 3400",
+    "preview": "Preview:",
+    "stats": "{tableCount} tables • {waitlistCount} waiting",
+    "inUse": "This buy-in has {tableCount} tables and {waitlistCount} waiting players. Cannot delete.",
+    "noBuyIns": "No buy-ins configured. Please add one.",
+    "validation": {
+      "required": "Please enter a buy-in amount",
+      "invalidNumber": "Please enter a valid number",
+      "positive": "Buy-in amount must be a positive integer",
+      "duplicate": "This buy-in already exists"
+    }
+  },
+  "table": {
+    "title": "Table",
+    "add": "Add Table",
+    "edit": "Edit Table",
+    "delete": "Delete Table",
+    "deleteConfirm": "Are you sure you want to delete the table with rate {rate}?",
+    "selectTable": "Select Table",
+    "buyIn": "Buy-in",
+    "maxSeats": "Max Seats",
+    "maxSeatsNote": "Set between 2 and 10 seats",
+    "status": "Status",
+    "open": "Open",
+    "closed": "Closed",
+    "occupancy": "{current}/{max} seats",
+    "emptySeats": "Empty seats: {count}",
+    "availableTables": "Available Tables",
+    "noTablesAvailable": "No tables available",
+    "noTables": "No tables. Please add one.",
+    "noBuyInsYet": "No buy-ins configured. Please add buy-ins first.",
+    "cannotEditBuyIn": "Cannot edit buy-in",
+    "validation": {
+      "selectBuyIn": "Please select a buy-in",
+      "seatsRange": "Max seats must be between 2 and 10",
+      "seatsBelowCurrent": "There are currently {current} players. Cannot change to {max} seats.",
+      "hasPlayers": "This table has players. Cannot delete."
+    }
+  },
+  "waitlist": {
+    "title": "Waitlist ({rate})",
+    "empty": "No players waiting",
+    "position": "#{position}",
+    "arrivalTime": "Estimated arrival: {time}",
+    "called": "Called {minutes} min ago",
+    "calledOvertime": "{minutes} min elapsed",
+    "call": "Call",
+    "seat": "Seat",
+    "addPlayer": "Add Player",
+    "qrScan": "QR Scan",
+    "deletePlayer": "Delete Player",
+    "deleteConfirm": "Remove this player from the waitlist?",
+    "selectTableFor": "Select table for {name}",
+    "playerInfo": "Player",
+    "preferredBuyIn": "Preferred buy-in: {amount}"
+  },
+  "tableStatus": {
+    "title": "Table Status",
+    "empty": "No tables for this buy-in"
+  },
+  "player": {
+    "name": "Player Name",
+    "namePlaceholder": "Enter name",
+    "rate": "Buy-in",
+    "add": "Add Player"
+  },
+  "toast": {
+    "buyInAdded": "Buy-in added",
+    "buyInUpdated": "Buy-in updated",
+    "buyInDeleted": "Buy-in deleted",
+    "buyInAddFailed": "Failed to add buy-in",
+    "buyInUpdateFailed": "Failed to update buy-in",
+    "buyInDeleteFailed": "Failed to delete buy-in",
+    "tableAdded": "Table added",
+    "tableUpdated": "Table updated",
+    "tableDeleted": "Table deleted",
+    "tableAddFailed": "Failed to add table",
+    "tableUpdateFailed": "Failed to update table",
+    "tableDeleteFailed": "Failed to delete table",
+    "playerCalled": "Player called",
+    "playerSeated": "{name} has been seated",
+    "playerDeleted": "Player deleted",
+    "playerAdded": "{name} added",
+    "seatsUpdated": "Seats updated",
+    "callFailed": "Failed to call player",
+    "seatFailed": "Failed to seat player",
+    "deleteFailed": "Failed to delete",
+    "addFailed": "Failed to add player",
+    "updateFailed": "Failed to update seats",
+    "qrScanSuccess": "QR scan successful (demo mode)",
+    "qrScanFailed": "QR scan failed",
+    "statsLoadFailed": "Failed to load statistics",
+    "tablesLoadFailed": "Failed to load tables"
+  },
+  "language": {
+    "select": "Select Language",
+    "ja": "日本語",
+    "zh-TW": "繁體中文",
+    "zh-CN": "简体中文",
+    "en": "English"
+  },
+  "mockMode": {
+    "banner": "Demo Mode - Using mock data (Supabase not connected)",
+    "loading": "Loading data from Supabase...",
+    "error": "Error: {error}",
+    "connected": "Connected to Supabase"
+  }
+}

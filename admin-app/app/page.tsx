@@ -10,15 +10,15 @@ import RateTabs from '@/components/RateTabs'
 import { AddPlayerModal } from '@/components/features/AddPlayerModal'
 import { QRScanModal } from '@/components/features/QRScanModal'
 import { ConfirmDialog } from '@/components/features/ConfirmDialog'
+import { SettingsModal } from '@/components/features/SettingsModal'
 import { useToast } from '@/hooks/useToast'
-
-const RATES = ['1/3', '2/5', '5/10+', 'Tournament']
 
 // 🎭 MOCK MODE - Using mock data instead of Supabase
 const USE_MOCK_DATA = false
 
 export default function AdminPage() {
-  const [selectedRate, setSelectedRate] = useState('1/3')
+  const [buyIns, setBuyIns] = useState<string[]>([]) // NT$ format buy-in amounts
+  const [selectedBuyIn, setSelectedBuyIn] = useState<string>('')
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>([])
   const [tables, setTables] = useState<Table[]>([])
   const [storeName] = useState('CTP Taipei') // Default store
@@ -31,6 +31,7 @@ export default function AdminPage() {
   const [qrScanModalOpen, setQRScanModalOpen] = useState(false)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [playerToDelete, setPlayerToDelete] = useState<string | null>(null)
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false)
 
   // Toast notifications
   const toast = useToast()
@@ -49,6 +50,13 @@ export default function AdminPage() {
 
         if (storeData) {
           setStoreId(storeData.id)
+          // Load buy-in amounts from database (NT$ format)
+          const loadedBuyIns = storeData.rates || []
+          setBuyIns(loadedBuyIns)
+          // Set first buy-in as default selected
+          if (loadedBuyIns.length > 0) {
+            setSelectedBuyIn(loadedBuyIns[0])
+          }
         } else {
           setError('Store not found')
         }
@@ -61,20 +69,20 @@ export default function AdminPage() {
     initializeStore()
   }, [])
 
-  // Load data when store is ready or rate changes
+  // Load data when store is ready or buy-in changes
   useEffect(() => {
     if (USE_MOCK_DATA) {
-      setWaitlist(mockWaitlist[selectedRate] || [])
-      setTables(mockTables[selectedRate] || [])
+      setWaitlist(mockWaitlist[selectedBuyIn] || [])
+      setTables(mockTables[selectedBuyIn] || [])
       return
     }
 
-    if (!storeId) return
+    if (!storeId || !selectedBuyIn) return
 
     let isMounted = true
 
     const initializeData = async () => {
-      await loadSupabaseData(storeId, selectedRate, isMounted)
+      await loadSupabaseData(storeId, selectedBuyIn, isMounted)
     }
 
     initializeData()
@@ -82,7 +90,7 @@ export default function AdminPage() {
     return () => {
       isMounted = false
     }
-  }, [selectedRate, storeId])
+  }, [selectedBuyIn, storeId])
 
   const loadSupabaseData = async (store: string, rate: string, isMounted: boolean) => {
     if (!store) {
@@ -230,25 +238,21 @@ export default function AdminPage() {
     }
   }
 
-  const handleSeatPlayer = async (playerId: string) => {
+  const handleSeatPlayer = async (playerId: string, tableId: string) => {
     if (USE_MOCK_DATA) {
       setWaitlist(prev => prev.filter(player => player.id !== playerId))
-      setTables(prev => {
-        const availableTable = prev.find(t => t.current_players < t.max_seats)
-        if (availableTable) {
-          return prev.map(table =>
-            table.id === availableTable.id
-              ? { ...table, current_players: table.current_players + 1 }
-              : table
-          )
-        }
-        return prev
-      })
-      console.log('✅ Player seated (MOCK MODE):', playerId)
+      setTables(prev =>
+        prev.map(table =>
+          table.id === tableId
+            ? { ...table, current_players: table.current_players + 1 }
+            : table
+        )
+      )
+      console.log('✅ Player seated (MOCK MODE):', playerId, 'to table:', tableId)
       toast.success('プレイヤーを着席させました')
     } else {
       try {
-        console.log('🔄 Seating player:', playerId)
+        console.log('🔄 Seating player:', playerId, 'to table:', tableId)
 
         // Update player status to seated
         const { data: playerData, error: updateError } = await supabase
@@ -264,16 +268,14 @@ export default function AdminPage() {
 
         console.log('✅ Updated waitlist:', playerData)
 
-        // Find and increment matching table
-        const player = waitlist.find(p => p.id === playerId)
-        const matchingTable = tables.find(t => t.rate === player?.rate_preference && t.current_players < t.max_seats)
-
-        if (matchingTable) {
-          console.log('🔄 Incrementing table seats:', matchingTable.id)
+        // Increment the selected table
+        const selectedTable = tables.find(t => t.id === tableId)
+        if (selectedTable) {
+          console.log('🔄 Incrementing table seats:', tableId)
           const { data: tableData, error: tableError } = await supabase
             .from('tables')
-            .update({ current_players: matchingTable.current_players + 1 })
-            .eq('id', matchingTable.id)
+            .update({ current_players: selectedTable.current_players + 1 })
+            .eq('id', tableId)
             .select()
 
           if (tableError) {
@@ -284,7 +286,8 @@ export default function AdminPage() {
         }
 
         console.log('✅ Player seated:', playerId)
-        toast.success('プレイヤーを着席させました')
+        const player = waitlist.find(p => p.id === playerId)
+        toast.success(`${player?.user_name}さんをテーブルに着席させました`)
       } catch (err) {
         console.error('❌ Error seating player:', err)
         toast.error('着席処理に失敗しました')
@@ -403,7 +406,7 @@ export default function AdminPage() {
             store_id: storeId,
             user_id: userId,
             user_name: userData.name,
-            rate_preference: selectedRate, // Use current selected rate
+            rate_preference: selectedBuyIn, // Use current selected buy-in
             status: 'waiting',
           })
 
@@ -449,6 +452,14 @@ export default function AdminPage() {
     }
   }
 
+  const handleBuyInsUpdate = (newBuyIns: string[]) => {
+    setBuyIns(newBuyIns)
+    // If current selection is no longer valid, select first buy-in
+    if (!newBuyIns.includes(selectedBuyIn) && newBuyIns.length > 0) {
+      setSelectedBuyIn(newBuyIns[0])
+    }
+  }
+
   return (
     <div className="h-screen w-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Mock Mode / Loading / Error Banner */}
@@ -479,10 +490,11 @@ export default function AdminPage() {
 
       {/* Top Bar */}
       <RateTabs
-        rates={RATES}
-        selectedRate={selectedRate}
-        onRateChange={setSelectedRate}
+        rates={buyIns}
+        selectedRate={selectedBuyIn}
+        onRateChange={setSelectedBuyIn}
         storeName={storeName}
+        onOpenSettings={() => setSettingsModalOpen(true)}
       />
 
       {/* Main Content: 60/40 Split - Responsive */}
@@ -496,12 +508,13 @@ export default function AdminPage() {
         ">
           <WaitlistPanel
             waitlist={waitlist}
+            tables={tables}
             onCallPlayer={handleCallPlayer}
             onSeatPlayer={handleSeatPlayer}
             onDeletePlayer={handleDeletePlayer}
             onAddPlayer={() => setAddPlayerModalOpen(true)}
             onQRScan={() => setQRScanModalOpen(true)}
-            selectedRate={selectedRate}
+            selectedRate={selectedBuyIn}
           />
         </div>
 
@@ -523,8 +536,8 @@ export default function AdminPage() {
         isOpen={addPlayerModalOpen}
         onClose={() => setAddPlayerModalOpen(false)}
         onSubmit={handleAddPlayer}
-        defaultRate={selectedRate}
-        rates={RATES}
+        defaultRate={selectedBuyIn}
+        rates={buyIns}
       />
 
       <QRScanModal
@@ -545,6 +558,14 @@ export default function AdminPage() {
         confirmLabel="削除"
         cancelLabel="キャンセル"
         variant="danger"
+      />
+
+      <SettingsModal
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
+        storeId={storeId || ''}
+        buyIns={buyIns}
+        onBuyInsUpdate={handleBuyInsUpdate}
       />
     </div>
   )

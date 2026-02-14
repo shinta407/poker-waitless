@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { Phone, Check, UserPlus, QrCode, Trash2, AlertTriangle } from 'lucide-react'
-import { type WaitlistEntry } from '@/lib/supabase'
+import { type WaitlistEntry, type Table } from '@/lib/supabase'
 import { useSound } from '@/hooks/useSound'
 import { Button } from '@/components/ui/Button'
+import { TableSelectionDialog } from '@/components/features/TableSelectionDialog'
 
 interface WaitlistPanelProps {
   waitlist: WaitlistEntry[]
+  tables: Table[]
   onCallPlayer: (playerId: string) => void
-  onSeatPlayer: (playerId: string) => void
+  onSeatPlayer: (playerId: string, tableId: string) => void
   onDeletePlayer: (playerId: string) => void
   onAddPlayer: () => void
   onQRScan: () => void
@@ -18,6 +20,7 @@ interface WaitlistPanelProps {
 
 export default function WaitlistPanel({
   waitlist,
+  tables,
   onCallPlayer,
   onSeatPlayer,
   onDeletePlayer,
@@ -25,6 +28,21 @@ export default function WaitlistPanel({
   onQRScan,
   selectedRate
 }: WaitlistPanelProps) {
+  const [tableSelectionDialogOpen, setTableSelectionDialogOpen] = useState(false)
+  const [playerToSeat, setPlayerToSeat] = useState<WaitlistEntry | null>(null)
+
+  const handleSeatClick = (player: WaitlistEntry) => {
+    setPlayerToSeat(player)
+    setTableSelectionDialogOpen(true)
+  }
+
+  const handleSelectTable = async (tableId: string) => {
+    if (!playerToSeat) return
+    await onSeatPlayer(playerToSeat.id, tableId)
+    setTableSelectionDialogOpen(false)
+    setPlayerToSeat(null)
+  }
+
   return (
     <div className="relative h-full flex flex-col bg-gray-50">
       {/* Scrollable content */}
@@ -45,7 +63,7 @@ export default function WaitlistPanel({
                   player={player}
                   position={index + 1}
                   onCallPlayer={onCallPlayer}
-                  onSeatPlayer={onSeatPlayer}
+                  onSeatPlayer={() => handleSeatClick(player)}
                   onDeletePlayer={onDeletePlayer}
                 />
               </div>
@@ -84,6 +102,18 @@ export default function WaitlistPanel({
           QRスキャン
         </Button>
       </div>
+
+      {/* Table Selection Dialog */}
+      <TableSelectionDialog
+        isOpen={tableSelectionDialogOpen}
+        onClose={() => {
+          setTableSelectionDialogOpen(false)
+          setPlayerToSeat(null)
+        }}
+        player={playerToSeat}
+        tables={tables}
+        onSelectTable={handleSelectTable}
+      />
     </div>
   )
 }
@@ -92,7 +122,7 @@ interface PlayerCardProps {
   player: WaitlistEntry
   position: number
   onCallPlayer: (playerId: string) => void
-  onSeatPlayer: (playerId: string) => void
+  onSeatPlayer: () => void
   onDeletePlayer: (playerId: string) => void
 }
 
@@ -226,7 +256,7 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
         </button>
 
         <button
-          onClick={() => onSeatPlayer(player.id)}
+          onClick={onSeatPlayer}
           className="
             flex-1 bg-green-500 hover:bg-green-600 text-white
             py-4 rounded-xl font-bold text-2xl

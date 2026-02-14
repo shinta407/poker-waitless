@@ -1,15 +1,17 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { Settings } from 'lucide-react'
 
 interface RateTabsProps {
   rates: string[]
   selectedRate: string
   onRateChange: (rate: string) => void
   storeName: string
+  onOpenSettings?: () => void
 }
 
-export default function RateTabs({ rates, selectedRate, onRateChange, storeName }: RateTabsProps) {
+export default function RateTabs({ rates, selectedRate, onRateChange, storeName, onOpenSettings }: RateTabsProps) {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   // Keyboard navigation
@@ -72,9 +74,20 @@ export default function RateTabs({ rates, selectedRate, onRateChange, storeName 
         ))}
       </nav>
 
-      {/* Store Name */}
-      <div className="text-2xl font-semibold text-gray-700" role="status" aria-label={`現在の店舗: ${storeName}`}>
-        店舗: {storeName}
+      {/* Store Name & Settings */}
+      <div className="flex items-center gap-4">
+        <div className="text-2xl font-semibold text-gray-700" role="status" aria-label={`現在の店舗: ${storeName}`}>
+          店舗: {storeName}
+        </div>
+        {onOpenSettings && (
+          <button
+            onClick={onOpenSettings}
+            aria-label="設定を開く"
+            className="p-3 rounded-lg hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+          >
+            <Settings className="w-6 h-6 text-gray-700" aria-hidden="true" />
+          </button>
+        )}
       </div>
     </div>
   )

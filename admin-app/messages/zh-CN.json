@@ -1,0 +1,136 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "发生错误",
+    "cancel": "取消",
+    "confirm": "确认",
+    "close": "关闭",
+    "add": "添加",
+    "edit": "编辑",
+    "delete": "删除",
+    "update": "更新",
+    "save": "保存",
+    "success": "成功",
+    "store": "店铺"
+  },
+  "settings": {
+    "title": "设置",
+    "buyInSettings": "买入金额设置",
+    "tablesSettings": "桌次管理",
+    "openSettings": "打开设置"
+  },
+  "buyIn": {
+    "title": "买入金额",
+    "add": "添加买入金额",
+    "edit": "编辑买入金额",
+    "delete": "删除买入金额",
+    "deleteConfirm": "确定要删除买入金额「{buyIn}」吗？",
+    "amount": "金额（仅限数字）",
+    "amountPlaceholder": "例：3400",
+    "preview": "预览：",
+    "stats": "{tableCount}桌 • {waitlistCount}人等待",
+    "inUse": "此买入金额有{tableCount}张桌次及{waitlistCount}位等待者。无法删除。",
+    "noBuyIns": "尚未设置买入金额。请添加。",
+    "validation": {
+      "required": "请输入买入金额",
+      "invalidNumber": "请输入有效的数字",
+      "positive": "买入金额必须为正整数",
+      "duplicate": "此买入金额已存在"
+    }
+  },
+  "table": {
+    "title": "桌次",
+    "add": "添加桌次",
+    "edit": "编辑桌次",
+    "delete": "删除桌次",
+    "deleteConfirm": "确定要删除盲注 {rate} 的桌次吗？",
+    "selectTable": "选择桌次",
+    "buyIn": "买入金额",
+    "maxSeats": "最大座位数",
+    "maxSeatsNote": "请设置2～10个座位",
+    "status": "状态",
+    "open": "开放",
+    "closed": "关闭",
+    "occupancy": "{current}/{max}位",
+    "emptySeats": "空位：{count}位",
+    "availableTables": "可用桌次",
+    "noTablesAvailable": "无可用桌次",
+    "noTables": "没有桌次。请添加。",
+    "noBuyInsYet": "尚未设置买入金额。请先添加买入金额。",
+    "cannotEditBuyIn": "无法编辑买入金额",
+    "validation": {
+      "selectBuyIn": "请选择买入金额",
+      "seatsRange": "最大座位数须在2～10之间",
+      "seatsBelowCurrent": "目前有{current}位玩家。无法变更为{max}位。",
+      "hasPlayers": "此桌次有玩家。无法删除。"
+    }
+  },
+  "waitlist": {
+    "title": "等待名单 ({rate})",
+    "empty": "无等待中的玩家",
+    "position": "第{position}位",
+    "arrivalTime": "预计到达：{time}",
+    "called": "已叫号 {minutes}分钟前",
+    "calledOvertime": "已经过{minutes}分钟",
+    "call": "叫号",
+    "seat": "入座",
+    "addPlayer": "添加玩家",
+    "qrScan": "QR扫描",
+    "deletePlayer": "删除玩家",
+    "deleteConfirm": "确定要从等待名单中删除此玩家吗？",
+    "selectTableFor": "为{name}选择桌次",
+    "playerInfo": "玩家",
+    "preferredBuyIn": "希望买入额：{amount}"
+  },
+  "tableStatus": {
+    "title": "桌况",
+    "empty": "此买入金额没有桌次"
+  },
+  "player": {
+    "name": "玩家名称",
+    "namePlaceholder": "输入名称",
+    "rate": "买入金额",
+    "add": "添加玩家"
+  },
+  "toast": {
+    "buyInAdded": "已添加买入金额",
+    "buyInUpdated": "已更新买入金额",
+    "buyInDeleted": "已删除买入金额",
+    "buyInAddFailed": "添加买入金额失败",
+    "buyInUpdateFailed": "更新买入金额失败",
+    "buyInDeleteFailed": "删除买入金额失败",
+    "tableAdded": "已添加桌次",
+    "tableUpdated": "已更新桌次",
+    "tableDeleted": "已删除桌次",
+    "tableAddFailed": "添加桌次失败",
+    "tableUpdateFailed": "更新桌次失败",
+    "tableDeleteFailed": "删除桌次失败",
+    "playerCalled": "已叫号玩家",
+    "playerSeated": "已安排{name}入座",
+    "playerDeleted": "已删除玩家",
+    "playerAdded": "已添加{name}",
+    "seatsUpdated": "已更新座位数",
+    "callFailed": "叫号失败",
+    "seatFailed": "入座处理失败",
+    "deleteFailed": "删除失败",
+    "addFailed": "添加玩家失败",
+    "updateFailed": "更新座位数失败",
+    "qrScanSuccess": "QR扫描成功（演示模式）",
+    "qrScanFailed": "QR扫描失败",
+    "statsLoadFailed": "统计信息加载失败",
+    "tablesLoadFailed": "桌次加载失败"
+  },
+  "language": {
+    "select": "选择语言",
+    "ja": "日本語",
+    "zh-TW": "繁體中文",
+    "zh-CN": "简体中文",
+    "en": "English"
+  },
+  "mockMode": {
+    "banner": "演示模式 - 使用模拟数据（未连接Supabase）",
+    "loading": "正在从Supabase加载数据...",
+    "error": "错误：{error}",
+    "connected": "已连接至Supabase"
+  }
+}

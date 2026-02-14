@@ -1,0 +1,136 @@
+{
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "close": "閉じる",
+    "add": "追加",
+    "edit": "編集",
+    "delete": "削除",
+    "update": "更新",
+    "save": "保存",
+    "success": "成功",
+    "store": "店舗"
+  },
+  "settings": {
+    "title": "設定",
+    "buyInSettings": "買入金額設定",
+    "tablesSettings": "卓管理",
+    "openSettings": "設定を開く"
+  },
+  "buyIn": {
+    "title": "買入金額",
+    "add": "買入金額を追加",
+    "edit": "買入金額を編集",
+    "delete": "買入金額を削除",
+    "deleteConfirm": "買入金額「{buyIn}」を削除してもよろしいですか？",
+    "amount": "金額（数値のみ）",
+    "amountPlaceholder": "例: 3400",
+    "preview": "プレビュー:",
+    "stats": "{tableCount}卓 • {waitlistCount}人待ち",
+    "inUse": "この買入金額には{tableCount}個の卓と{waitlistCount}人の待機者がいます。削除できません。",
+    "noBuyIns": "買入金額が設定されていません。追加してください。",
+    "validation": {
+      "required": "買入金額を入力してください",
+      "invalidNumber": "有効な数値を入力してください",
+      "positive": "買入金額は正の整数である必要があります",
+      "duplicate": "この買入金額は既に存在します"
+    }
+  },
+  "table": {
+    "title": "卓",
+    "add": "卓を追加",
+    "edit": "卓を編集",
+    "delete": "卓を削除",
+    "deleteConfirm": "レート {rate} の卓を削除してもよろしいですか？",
+    "selectTable": "テーブルを選択",
+    "buyIn": "買入金額",
+    "maxSeats": "最大席数",
+    "maxSeatsNote": "2〜10席の範囲で設定してください",
+    "status": "ステータス",
+    "open": "Open",
+    "closed": "Closed",
+    "occupancy": "{current}/{max}席",
+    "emptySeats": "空席: {count}席",
+    "availableTables": "利用可能なテーブル",
+    "noTablesAvailable": "利用可能なテーブルがありません",
+    "noTables": "卓がありません。追加してください。",
+    "noBuyInsYet": "買入金額が設定されていません。まず買入金額を追加してください。",
+    "cannotEditBuyIn": "買入金額は編集できません",
+    "validation": {
+      "selectBuyIn": "買入金額を選択してください",
+      "seatsRange": "最大席数は2〜10の範囲で設定してください",
+      "seatsBelowCurrent": "現在{current}人のプレイヤーがいます。{max}席には変更できません。",
+      "hasPlayers": "この卓にはプレイヤーがいます。削除できません。"
+    }
+  },
+  "waitlist": {
+    "title": "待機リスト ({rate})",
+    "empty": "待機中のプレイヤーはいません",
+    "position": "#{position}",
+    "arrivalTime": "到着予定: {time}",
+    "called": "呼び出し済 {minutes}分前",
+    "calledOvertime": "{minutes}分経過",
+    "call": "呼び出し",
+    "seat": "着席",
+    "addPlayer": "プレイヤー追加",
+    "qrScan": "QRスキャン",
+    "deletePlayer": "プレイヤーを削除",
+    "deleteConfirm": "このプレイヤーを待機リストから削除しますか?",
+    "selectTableFor": "{name}さんのテーブルを選択",
+    "playerInfo": "プレイヤー",
+    "preferredBuyIn": "希望買入額: {amount}"
+  },
+  "tableStatus": {
+    "title": "卓状況",
+    "empty": "この買入金額の卓はありません"
+  },
+  "player": {
+    "name": "プレイヤー名",
+    "namePlaceholder": "名前を入力",
+    "rate": "買入金額",
+    "add": "プレイヤーを追加する"
+  },
+  "toast": {
+    "buyInAdded": "買入金額を追加しました",
+    "buyInUpdated": "買入金額を更新しました",
+    "buyInDeleted": "買入金額を削除しました",
+    "buyInAddFailed": "買入金額の追加に失敗しました",
+    "buyInUpdateFailed": "買入金額の更新に失敗しました",
+    "buyInDeleteFailed": "買入金額の削除に失敗しました",
+    "tableAdded": "卓を追加しました",
+    "tableUpdated": "卓を更新しました",
+    "tableDeleted": "卓を削除しました",
+    "tableAddFailed": "卓の追加に失敗しました",
+    "tableUpdateFailed": "卓の更新に失敗しました",
+    "tableDeleteFailed": "卓の削除に失敗しました",
+    "playerCalled": "プレイヤーを呼び出しました",
+    "playerSeated": "{name}さんをテーブルに着席させました",
+    "playerDeleted": "プレイヤーを削除しました",
+    "playerAdded": "{name}を追加しました",
+    "seatsUpdated": "座席数を更新しました",
+    "callFailed": "呼び出しに失敗しました",
+    "seatFailed": "着席処理に失敗しました",
+    "deleteFailed": "削除に失敗しました",
+    "addFailed": "プレイヤー追加に失敗しました",
+    "updateFailed": "座席数の更新に失敗しました",
+    "qrScanSuccess": "QRスキャン成功（デモモード）",
+    "qrScanFailed": "QRスキャンに失敗しました",
+    "statsLoadFailed": "統計情報の読み込みに失敗しました",
+    "tablesLoadFailed": "テーブルの読み込みに失敗しました"
+  },
+  "language": {
+    "select": "言語を選択",
+    "ja": "日本語",
+    "zh-TW": "繁體中文",
+    "zh-CN": "简体中文",
+    "en": "English"
+  },
+  "mockMode": {
+    "banner": "デモモード - モックデータ使用中（Supabase未接続）",
+    "loading": "Supabaseから データを読み込み中...",
+    "error": "エラー: {error}",
+    "connected": "Supabaseに接続しました"
+  }
+}
