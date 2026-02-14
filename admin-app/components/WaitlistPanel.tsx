@@ -6,6 +6,7 @@ import { type WaitlistEntry, type Table } from '@/lib/supabase'
 import { useSound } from '@/hooks/useSound'
 import { Button } from '@/components/ui/Button'
 import { TableSelectionDialog } from '@/components/features/TableSelectionDialog'
+import { useTranslations } from 'next-intl'
 
 interface WaitlistPanelProps {
   waitlist: WaitlistEntry[]
@@ -28,6 +29,7 @@ export default function WaitlistPanel({
   onQRScan,
   selectedRate
 }: WaitlistPanelProps) {
+  const t = useTranslations('waitlist')
   const [tableSelectionDialogOpen, setTableSelectionDialogOpen] = useState(false)
   const [playerToSeat, setPlayerToSeat] = useState<WaitlistEntry | null>(null)
 
@@ -48,15 +50,15 @@ export default function WaitlistPanel({
       {/* Scrollable content */}
       <div className="flex-1 overflow-auto p-6 pb-32">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">
-          待機リスト ({selectedRate})
+          {t('title', { rate: selectedRate })}
         </h2>
 
         {waitlist.length === 0 ? (
           <div className="text-center py-12 text-gray-400 text-2xl">
-            待機中のプレイヤーはいません
+            {t('empty')}
           </div>
         ) : (
-          <div role="list" aria-label="待機リスト" className="space-y-3">
+          <div role="list" aria-label={t('title', { rate: selectedRate })} className="space-y-3">
             {waitlist.map((player, index) => (
               <div key={player.id} role="listitem">
                 <PlayerCard
@@ -87,9 +89,9 @@ export default function WaitlistPanel({
           icon={<UserPlus className="w-6 h-6" />}
           onClick={onAddPlayer}
           className="flex-1"
-          aria-label="プレイヤーを追加"
+          aria-label={t('addPlayer')}
         >
-          プレイヤー追加
+          {t('addPlayer')}
         </Button>
         <Button
           variant="secondary"
@@ -97,9 +99,9 @@ export default function WaitlistPanel({
           icon={<QrCode className="w-6 h-6" />}
           onClick={onQRScan}
           className="flex-1"
-          aria-label="QRコードをスキャン"
+          aria-label={t('qrScan')}
         >
-          QRスキャン
+          {t('qrScan')}
         </Button>
       </div>
 
@@ -127,6 +129,7 @@ interface PlayerCardProps {
 }
 
 function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlayer }: PlayerCardProps) {
+  const t = useTranslations('waitlist')
   const [timeSinceCalled, setTimeSinceCalled] = useState<number>(0)
   const [isBlinking, setIsBlinking] = useState(false)
   const [alertPlayed, setAlertPlayed] = useState(false)
@@ -181,8 +184,8 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
         rounded-xl p-6 shadow-md border-2 border-gray-200
         transition-all
       `}
-      aria-label={`${position}番: ${player.user_name}、ステータス: ${
-        player.status === 'called' ? '呼び出し済' : '待機中'
+      aria-label={`${t('position', { position })}: ${player.user_name}, ${
+        player.status === 'called' ? t('called', { minutes: timeSinceCalled }) : t('playerInfo')
       }`}
     >
       {/* Player Info */}
@@ -196,7 +199,7 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
               {player.user_name}
             </h3>
             <p className="text-lg text-gray-600 mt-1">
-              到着予定: {getEstimatedArrival()}
+              {t('arrivalTime', { time: getEstimatedArrival() })}
             </p>
           </div>
         </div>
@@ -213,7 +216,7 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
               aria-live="polite"
             >
               {isBlinking && <AlertTriangle className="w-5 h-5" aria-hidden="true" />}
-              {isBlinking ? `${timeSinceCalled}分経過` : `呼び出し済 ${timeSinceCalled}分前`}
+              {isBlinking ? t('calledOvertime', { minutes: timeSinceCalled }) : t('called', { minutes: timeSinceCalled })}
             </span>
           )}
           <button
@@ -225,7 +228,7 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
               transition-colors
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500
             "
-            aria-label={`${player.user_name}を削除`}
+            aria-label={t('deletePlayer')}
           >
             <Trash2 className="w-6 h-6" aria-hidden="true" />
           </button>
@@ -248,11 +251,11 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
                 : 'bg-blue-500 hover:bg-blue-600 text-white'
             }
           `}
-          aria-label={`${player.user_name}を呼び出す`}
+          aria-label={t('call')}
           aria-disabled={player.status === 'called'}
         >
           <Phone className="w-6 h-6" aria-hidden="true" />
-          呼び出し
+          {t('call')}
         </button>
 
         <button
@@ -264,10 +267,10 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
             flex items-center justify-center gap-2
             focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-green-500 focus-visible:ring-offset-2
           "
-          aria-label={`${player.user_name}を着席させる`}
+          aria-label={t('seat')}
         >
           <Check className="w-6 h-6" aria-hidden="true" />
-          着席
+          {t('seat')}
         </button>
       </div>
     </div>

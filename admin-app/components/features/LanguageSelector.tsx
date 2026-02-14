@@ -20,8 +20,7 @@ export function LanguageSelector({ className = '' }: LanguageSelectorProps) {
 
   const handleLanguageChange = (newLocale: Locale) => {
     setLocale(newLocale)
-    // Reload the page to apply new locale
-    window.location.reload()
+    // No reload needed - I18nProvider will handle the locale change
   }
 
   const currentLanguage = languages.find((lang) => lang.code === locale)

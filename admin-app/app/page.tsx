@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Theater, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { type WaitlistEntry, type Table, supabase } from '@/lib/supabase'
 import { mockWaitlist, mockTables } from '@/lib/mockData'
 import WaitlistPanel from '@/components/WaitlistPanel'
@@ -35,6 +36,9 @@ export default function AdminPage() {
 
   // Toast notifications
   const toast = useToast()
+  const t = useTranslations()
+  const tMockMode = useTranslations('mockMode')
+  const tToast = useTranslations('toast')
 
   // Load initial store data
   useEffect(() => {
@@ -386,7 +390,7 @@ export default function AdminPage() {
     try {
       if (USE_MOCK_DATA) {
         // Mock: Find user by ID and add to waitlist
-        toast.success(`QRスキャン成功（デモモード）`)
+        toast.success(tToast('qrScanSuccess'))
       } else {
         if (!storeId) throw new Error('Store ID not set')
 
@@ -466,25 +470,25 @@ export default function AdminPage() {
       {USE_MOCK_DATA && (
         <div className="bg-blue-100 text-blue-900 border-b-2 border-blue-300 px-6 py-3 flex items-center justify-center gap-3">
           <Theater className="w-5 h-5" aria-hidden="true" />
-          <span className="font-bold text-lg">デモモード - モックデータ使用中（Supabase未接続）</span>
+          <span className="font-bold text-lg">{tMockMode('banner')}</span>
         </div>
       )}
       {!USE_MOCK_DATA && loading && (
         <div className="bg-blue-100 text-blue-900 border-b-2 border-blue-300 px-6 py-3 flex items-center justify-center gap-3">
           <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-          <span className="font-bold text-lg">Supabaseから データを読み込み中...</span>
+          <span className="font-bold text-lg">{tMockMode('loading')}</span>
         </div>
       )}
       {!USE_MOCK_DATA && error && (
         <div className="bg-red-100 text-red-900 border-b-2 border-red-300 px-6 py-3 flex items-center justify-center gap-3" role="alert">
           <AlertCircle className="w-5 h-5" aria-hidden="true" />
-          <span className="font-bold text-lg">エラー: {error}</span>
+          <span className="font-bold text-lg">{tMockMode('error', { error })}</span>
         </div>
       )}
       {!USE_MOCK_DATA && !loading && !error && (
         <div className="bg-green-100 text-green-900 border-b-2 border-green-300 px-6 py-3 flex items-center justify-center gap-3">
           <CheckCircle className="w-5 h-5" aria-hidden="true" />
-          <span className="font-bold text-lg">Supabaseに接続しました</span>
+          <span className="font-bold text-lg">{tMockMode('connected')}</span>
         </div>
       )}
 

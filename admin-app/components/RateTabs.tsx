@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { Settings } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface RateTabsProps {
   rates: string[]
@@ -12,6 +13,9 @@ interface RateTabsProps {
 }
 
 export default function RateTabs({ rates, selectedRate, onRateChange, storeName, onOpenSettings }: RateTabsProps) {
+  const t = useTranslations()
+  const tCommon = useTranslations('common')
+  const tSettings = useTranslations('settings')
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   // Keyboard navigation
@@ -46,7 +50,7 @@ export default function RateTabs({ rates, selectedRate, onRateChange, storeName,
   return (
     <div className="h-20 bg-white border-b-4 border-gray-300 flex items-center justify-between px-6 shadow-sm">
       {/* Rate Tabs */}
-      <nav role="tablist" aria-label="レート選択" className="flex gap-3">
+      <nav role="tablist" aria-label={tCommon('store')} className="flex gap-3">
         {rates.map((rate, index) => (
           <button
             key={rate}
@@ -76,13 +80,13 @@ export default function RateTabs({ rates, selectedRate, onRateChange, storeName,
 
       {/* Store Name & Settings */}
       <div className="flex items-center gap-4">
-        <div className="text-2xl font-semibold text-gray-700" role="status" aria-label={`現在の店舗: ${storeName}`}>
-          店舗: {storeName}
+        <div className="text-2xl font-semibold text-gray-700" role="status" aria-label={`${tCommon('store')}: ${storeName}`}>
+          {tCommon('store')}: {storeName}
         </div>
         {onOpenSettings && (
           <button
             onClick={onOpenSettings}
-            aria-label="設定を開く"
+            aria-label={tSettings('openSettings')}
             className="p-3 rounded-lg hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
           >
             <Settings className="w-6 h-6 text-gray-700" aria-hidden="true" />
