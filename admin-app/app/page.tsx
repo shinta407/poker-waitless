@@ -213,7 +213,7 @@ export default function AdminPage() {
           : player
       ))
       console.log('✅ Player called (MOCK MODE):', playerId)
-      toast.success('プレイヤーを呼び出しました')
+      toast.success(t('toast.playerCalled'))
     } else {
       try {
         const now = new Date().toISOString()
@@ -234,10 +234,10 @@ export default function AdminPage() {
         }
 
         console.log('✅ Player called:', { playerId, response: data })
-        toast.success('プレイヤーを呼び出しました')
+        toast.success(t('toast.playerCalled'))
       } catch (err) {
         console.error('❌ Error calling player:', err)
-        toast.error('呼び出しに失敗しました')
+        toast.error(t('toast.callFailed'))
       }
     }
   }
@@ -253,7 +253,7 @@ export default function AdminPage() {
         )
       )
       console.log('✅ Player seated (MOCK MODE):', playerId, 'to table:', tableId)
-      toast.success('プレイヤーを着席させました')
+      toast.success(t('toast.playerSeated', { name: '' }))
     } else {
       try {
         console.log('🔄 Seating player:', playerId, 'to table:', tableId)
@@ -294,7 +294,7 @@ export default function AdminPage() {
         toast.success(`${player?.user_name}さんをテーブルに着席させました`)
       } catch (err) {
         console.error('❌ Error seating player:', err)
-        toast.error('着席処理に失敗しました')
+        toast.error(t('toast.seatFailed'))
       }
     }
   }
@@ -309,7 +309,7 @@ export default function AdminPage() {
         return table
       }))
       console.log('✅ Seats updated (MOCK MODE):', tableId, increment)
-      toast.success('座席数を更新しました')
+      toast.success(t('toast.seatsUpdated'))
     } else {
       try {
         const table = tables.find(t => t.id === tableId)
@@ -333,10 +333,10 @@ export default function AdminPage() {
         }
 
         console.log('✅ Seats updated:', { tableId, newCount, response: data })
-        toast.success('座席数を更新しました')
+        toast.success(t('toast.seatsUpdated'))
       } catch (err) {
         console.error('❌ Error updating seats:', err)
-        toast.error('座席数の更新に失敗しました')
+        toast.error(t('toast.updateFailed'))
       }
     }
   }
@@ -381,7 +381,7 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error adding player:', error)
-      toast.error('プレイヤー追加に失敗しました')
+      toast.error(t('toast.addFailed'))
       throw error
     }
   }
@@ -420,7 +420,7 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error scanning QR:', error)
-      toast.error('QRスキャンに失敗しました')
+      toast.error(t('toast.qrScanFailed'))
     }
   }
 
@@ -435,7 +435,7 @@ export default function AdminPage() {
     try {
       if (USE_MOCK_DATA) {
         setWaitlist(prev => prev.filter(p => p.id !== playerToDelete))
-        toast.success('プレイヤーを削除しました')
+        toast.success(t('toast.playerDeleted'))
       } else {
         // Update status to 'cancelled' instead of hard delete
         const { error } = await supabase
@@ -445,12 +445,12 @@ export default function AdminPage() {
 
         if (error) throw error
 
-        toast.success('プレイヤーを削除しました')
+        toast.success(t('toast.playerDeleted'))
         // Real-time subscription will remove from UI
       }
     } catch (error) {
       console.error('Error deleting player:', error)
-      toast.error('削除に失敗しました')
+      toast.error(t('toast.deleteFailed'))
     } finally {
       setPlayerToDelete(null)
     }

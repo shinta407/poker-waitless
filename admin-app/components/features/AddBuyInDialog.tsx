@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 
@@ -24,6 +25,7 @@ export function AddBuyInDialog({
   const [amount, setAmount] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const t = useTranslations()
 
   useEffect(() => {
     if (isOpen) {
@@ -53,22 +55,22 @@ export function AddBuyInDialog({
 
   const validateBuyIn = (value: string): string | null => {
     if (!value) {
-      return '買入金額を入力してください'
+      return t('buyIn.validation.required')
     }
 
     const numericValue = value.replace(/[^0-9]/g, '')
     if (!numericValue) {
-      return '有効な数値を入力してください'
+      return t('buyIn.validation.invalidNumber')
     }
 
     const number = parseInt(numericValue, 10)
     if (number <= 0) {
-      return '買入金額は正の整数である必要があります'
+      return t('buyIn.validation.positive')
     }
 
     const formattedBuyIn = formatBuyIn(value)
     if (existingBuyIns.includes(formattedBuyIn)) {
-      return 'この買入金額は既に存在します'
+      return t('buyIn.validation.duplicate')
     }
 
     return null
@@ -116,14 +118,14 @@ export function AddBuyInDialog({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={mode === 'add' ? '買入金額を追加' : '買入金額を編集'}
+      title={mode === 'add' ? t('buyIn.add') : t('buyIn.edit')}
       size="small"
     >
       <div className="space-y-4">
         {/* Amount Input */}
         <div>
           <label htmlFor="buy-in-amount" className="block text-sm font-semibold text-gray-700 mb-2">
-            金額（数値のみ）
+            {t('buyIn.amount')}
           </label>
           <input
             id="buy-in-amount"
@@ -132,7 +134,7 @@ export function AddBuyInDialog({
             value={amount}
             onChange={(e) => handleAmountChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="例: 3400"
+            placeholder={t('buyIn.amountPlaceholder')}
             className={`
               w-full px-4 py-3 text-lg border-2 rounded-lg
               focus:outline-none focus:ring-2 focus:ring-sky-500
@@ -152,7 +154,7 @@ export function AddBuyInDialog({
         {/* Preview */}
         {previewBuyIn && !error && (
           <div id="buy-in-preview" className="p-3 bg-blue-50 border-2 border-blue-200 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">プレビュー:</p>
+            <p className="text-sm text-gray-600 mb-1">{t('buyIn.preview')}</p>
             <p className="text-2xl font-bold text-blue-600">{previewBuyIn}</p>
           </div>
         )}
@@ -166,7 +168,7 @@ export function AddBuyInDialog({
             className="flex-1"
             disabled={loading}
           >
-            キャンセル
+            {t('common.cancel')}
           </Button>
           <Button
             variant="primary"
@@ -175,7 +177,7 @@ export function AddBuyInDialog({
             className="flex-1"
             loading={loading}
           >
-            {mode === 'add' ? '追加' : '更新'}
+            {mode === 'add' ? t('common.add') : t('common.update')}
           </Button>
         </div>
       </div>

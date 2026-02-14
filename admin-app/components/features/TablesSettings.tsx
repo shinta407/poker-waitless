@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, Pencil, Trash2, ChevronDown, ChevronRight } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { supabase, type Table } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -23,6 +24,7 @@ export function TablesSettings({ storeId, buyIns }: TablesSettingsProps) {
   const [selectedTable, setSelectedTable] = useState<Table | null>(null)
   const [selectedBuyInForAdd, setSelectedBuyInForAdd] = useState<string>('')
   const toast = useToast()
+  const t = useTranslations()
 
   // Load tables
   useEffect(() => {
@@ -45,7 +47,7 @@ export function TablesSettings({ storeId, buyIns }: TablesSettingsProps) {
         setTables(data || [])
       } catch (error) {
         console.error('Error loading tables:', error)
-        toast.error('テーブルの読み込みに失敗しました')
+        toast.error(t('toast.tablesLoadFailed'))
       } finally {
         setLoading(false)
       }
@@ -112,12 +114,12 @@ export function TablesSettings({ storeId, buyIns }: TablesSettingsProps) {
 
       if (error) throw error
 
-      toast.success('卓を追加しました')
+      toast.success(t('toast.tableAdded'))
       setAddDialogOpen(false)
       setSelectedBuyInForAdd('')
     } catch (error) {
       console.error('Error adding table:', error)
-      toast.error('卓の追加に失敗しました')
+      toast.error(t('toast.tableAddFailed'))
       throw error
     }
   }
@@ -144,12 +146,12 @@ export function TablesSettings({ storeId, buyIns }: TablesSettingsProps) {
 
       if (error) throw error
 
-      toast.success('卓を更新しました')
+      toast.success(t('toast.tableUpdated'))
       setEditDialogOpen(false)
       setSelectedTable(null)
     } catch (error) {
       console.error('Error editing table:', error)
-      toast.error('卓の更新に失敗しました')
+      toast.error(t('toast.tableUpdateFailed'))
       throw error
     }
   }
@@ -170,12 +172,12 @@ export function TablesSettings({ storeId, buyIns }: TablesSettingsProps) {
 
       if (error) throw error
 
-      toast.success('卓を削除しました')
+      toast.success(t('toast.tableDeleted'))
       setDeleteConfirmOpen(false)
       setSelectedTable(null)
     } catch (error) {
       console.error('Error deleting table:', error)
-      toast.error('卓の削除に失敗しました')
+      toast.error(t('toast.tableDeleteFailed'))
     }
   }
 
@@ -197,10 +199,10 @@ export function TablesSettings({ storeId, buyIns }: TablesSettingsProps) {
   return (
     <div className="space-y-4">
       {loading ? (
-        <div className="text-center py-8 text-gray-500">読み込み中...</div>
+        <div className="text-center py-8 text-gray-500">{t('common.loading')}</div>
       ) : buyIns.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          買入金額が設定されていません。まず買入金額を追加してください。
+          {t('table.noBuyInsYet')}
         </div>
       ) : (
         <div className="space-y-3">
@@ -235,7 +237,7 @@ export function TablesSettings({ storeId, buyIns }: TablesSettingsProps) {
                       icon={<Plus className="w-4 h-4" />}
                       onClick={() => openAddDialog(buyIn)}
                     >
-                      卓を追加
+                      {t('table.add')}
                     </Button>
                   </div>
                 </div>

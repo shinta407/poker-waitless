@@ -90,11 +90,11 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
       if (error) throw error
 
       onBuyInsUpdate(newBuyIns)
-      toast.success('買入金額を追加しました')
+      toast.success(t('toast.buyInAdded'))
       setAddDialogOpen(false)
     } catch (error) {
       console.error('Error adding buy-in:', error)
-      toast.error('買入金額の追加に失敗しました')
+      toast.error(t('toast.buyInAddFailed'))
       throw error
     }
   }
@@ -130,12 +130,12 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
       if (waitlistError) throw waitlistError
 
       onBuyInsUpdate(updatedBuyIns)
-      toast.success('買入金額を更新しました')
+      toast.success(t('toast.buyInUpdated'))
       setEditDialogOpen(false)
       setSelectedBuyIn('')
     } catch (error) {
       console.error('Error editing buy-in:', error)
-      toast.error('買入金額の更新に失敗しました')
+      toast.error(t('toast.buyInUpdateFailed'))
       throw error
     }
   }
@@ -146,7 +146,7 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
       const stat = stats.find((s) => s.buyIn === selectedBuyIn)
       if (stat && (stat.tableCount > 0 || stat.waitlistCount > 0)) {
         toast.error(
-          `この買入金額には${stat.tableCount}個の卓と${stat.waitlistCount}人の待機者がいます。削除できません。`
+          t('buyIn.inUse', { tableCount: stat.tableCount, waitlistCount: stat.waitlistCount })
         )
         setDeleteConfirmOpen(false)
         setSelectedBuyIn('')
@@ -163,12 +163,12 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
       if (error) throw error
 
       onBuyInsUpdate(updatedBuyIns)
-      toast.success('買入金額を削除しました')
+      toast.success(t('toast.buyInDeleted'))
       setDeleteConfirmOpen(false)
       setSelectedBuyIn('')
     } catch (error) {
       console.error('Error deleting buy-in:', error)
-      toast.error('買入金額の削除に失敗しました')
+      toast.error(t('toast.buyInDeleteFailed'))
     }
   }
 
@@ -194,16 +194,16 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
           icon={<Plus className="w-5 h-5" />}
           onClick={() => setAddDialogOpen(true)}
         >
-          買入金額を追加
+          {t('buyIn.add')}
         </Button>
       </div>
 
       {/* Buy-in List */}
       {loading ? (
-        <div className="text-center py-8 text-gray-500">読み込み中...</div>
+        <div className="text-center py-8 text-gray-500">{t('common.loading')}</div>
       ) : buyIns.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          買入金額が設定されていません。追加してください。
+          {t('buyIn.noBuyIns')}
         </div>
       ) : (
         <div className="space-y-3">
@@ -220,11 +220,9 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
                   <div className="text-2xl font-bold text-gray-900">{buyIn}</div>
                   <div className="text-sm text-gray-600 mt-1">
                     {stat ? (
-                      <>
-                        {stat.tableCount}卓 • {stat.waitlistCount}人待ち
-                      </>
+                      t('buyIn.stats', { tableCount: stat.tableCount, waitlistCount: stat.waitlistCount })
                     ) : (
-                      '読み込み中...'
+                      t('common.loading')
                     )}
                   </div>
                 </div>
@@ -233,7 +231,7 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
                   <button
                     onClick={() => openEditDialog(buyIn)}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                    aria-label={`${buyIn}を編集`}
+                    aria-label={t('common.edit')}
                   >
                     <Pencil className="w-5 h-5" aria-hidden="true" />
                   </button>
@@ -249,8 +247,8 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
                           : 'text-red-600 hover:bg-red-50'
                       }
                     `}
-                    aria-label={`${buyIn}を削除`}
-                    title={isInUse ? '使用中のため削除できません' : ''}
+                    aria-label={t('common.delete')}
+                    title={isInUse ? t('buyIn.inUse', { tableCount: stat?.tableCount || 0, waitlistCount: stat?.waitlistCount || 0 }) : ''}
                   >
                     <Trash2 className="w-5 h-5" aria-hidden="true" />
                   </button>
@@ -291,10 +289,10 @@ export function BuyInSettings({ storeId, buyIns, onBuyInsUpdate }: BuyInSettings
           setSelectedBuyIn('')
         }}
         onConfirm={handleDeleteBuyIn}
-        title="買入金額を削除"
-        message={`買入金額「${selectedBuyIn}」を削除してもよろしいですか？`}
-        confirmLabel="削除"
-        cancelLabel="キャンセル"
+        title={t('buyIn.delete')}
+        message={t('buyIn.deleteConfirm', { buyIn: selectedBuyIn })}
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
         variant="danger"
       />
     </div>
