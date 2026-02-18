@@ -44,7 +44,8 @@
     "playerName": "玩家名稱",
     "playerNamePlaceholder": "請輸入您的名稱",
     "playerNameRequired": "請輸入玩家名稱",
-    "playerNameTooLong": "名稱最多{max}個字"
+    "playerNameTooLong": "名稱最多{max}個字",
+    "waitingPlayers": "等候中的玩家"
   },
   "status": {
     "title": "我的狀態",
@@ -58,6 +59,7 @@
     "notificationEnabled": "LINE通知：已啟用",
     "cancelButton": "取消",
     "cancelSuccess": "已取消",
+    "qrHint": "我的QR碼",
     "called": {
       "title": "輪到您了！",
       "message": "請前往店舖"
@@ -77,6 +79,14 @@
     "greenDescription": "🟢 有空位：可立即入座",
     "yellowDescription": "🟡 稍候片刻：3人以內等候",
     "redDescription": "🔴 擁擠中：4人以上等候"
+  },
+  "qr": {
+    "title": "我的QR碼",
+    "description": "將此QR碼出示給工作人員以加入等候名單",
+    "yourName": "您的名稱",
+    "namePlaceholder": "請輸入您的名稱",
+    "saveName": "儲存名稱",
+    "nameSaved": "已儲存"
   },
   "language": {
     "select": "選擇語言",

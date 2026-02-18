@@ -44,7 +44,8 @@
     "playerName": "プレイヤー名",
     "playerNamePlaceholder": "お名前を入力してください",
     "playerNameRequired": "プレイヤー名を入力してください",
-    "playerNameTooLong": "名前は{max}文字以内で入力してください"
+    "playerNameTooLong": "名前は{max}文字以内で入力してください",
+    "waitingPlayers": "待機中のプレイヤー"
   },
   "status": {
     "title": "マイステータス",
@@ -58,6 +59,7 @@
     "notificationEnabled": "LINE通知: 有効",
     "cancelButton": "キャンセル",
     "cancelSuccess": "キャンセルしました",
+    "qrHint": "マイQRコード",
     "called": {
       "title": "順番が来ました！",
       "message": "店舗にお越しください"
@@ -77,6 +79,14 @@
     "greenDescription": "🟢 空席あり：すぐに座れます",
     "yellowDescription": "🟡 少し待ち：3人以内の待ち",
     "redDescription": "🔴 混雑中：4人以上待ち"
+  },
+  "qr": {
+    "title": "マイQRコード",
+    "description": "このQRコードをスタッフに見せてください",
+    "yourName": "あなたの名前",
+    "namePlaceholder": "名前を入力してください",
+    "saveName": "名前を保存",
+    "nameSaved": "保存しました"
   },
   "language": {
     "select": "言語を選択",

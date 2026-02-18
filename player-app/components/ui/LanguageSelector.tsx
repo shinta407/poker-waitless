@@ -40,6 +40,9 @@ export function LanguageSelector() {
   const handleLanguageChange = (langCode: string) => {
     setIsOpen(false)
 
+    // Persist language preference in cookie (next-intl reads NEXT_LOCALE)
+    document.cookie = `NEXT_LOCALE=${langCode};path=/;max-age=31536000`
+
     // Remove current locale from pathname if present
     const pathnameWithoutLocale = pathname.replace(localePattern, '') || '/'
 

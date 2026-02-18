@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import type { WaitlistEntry } from '@/lib/types'
 import { useRealtimeStore } from '@/hooks/useRealtimeStore'
-import { getMockUser, supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
+import { getPlayerId, savePlayerName } from '@/lib/playerProfile'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Loader } from '@/components/ui/Loader'
@@ -17,6 +18,7 @@ export default function StoreDetailPage() {
   const router = useRouter()
   const t = useTranslations('store')
   const tCommon = useTranslations('common')
+  const locale = useLocale()
   const storeId = params.storeId as string
 
   const [selectedRate, setSelectedRate] = useState<string>('')
@@ -62,13 +64,15 @@ export default function StoreDetailPage() {
     }
 
     const trimmedPlayerName = playerName.trim()
+    const userId = getPlayerId()
+    savePlayerName(trimmedPlayerName)
     const useMockMode = process.env.NEXT_PUBLIC_USE_MOCK_MODE === 'true'
 
     if (useMockMode) {
       const newEntry: WaitlistEntry = {
         id: `wait-${Date.now()}`,
         store_id: storeId,
-        user_id: `user_${Date.now()}`,
+        user_id: userId,
         user_name: trimmedPlayerName,
         rate_preference: selectedRate,
         status: 'waiting',
@@ -78,14 +82,17 @@ export default function StoreDetailPage() {
         updated_at: new Date().toISOString(),
       }
       console.log('✅ チェックイン成功（モック）:', newEntry)
-      router.push(`/status/${newEntry.id}`)
+      const mockStatusPath = locale === 'zh-TW' ? `/status/${newEntry.id}` : `/${locale}/status/${newEntry.id}`
+      router.push(mockStatusPath)
     } else {
       try {
+        await supabase.from('users').upsert({ id: userId, name: trimmedPlayerName })
+
         const { data, error } = await supabase
           .from('waitlist')
           .insert({
             store_id: storeId,
-            user_id: `user_${Date.now()}`,
+            user_id: userId,
             user_name: trimmedPlayerName,
             rate_preference: selectedRate,
             arrival_estimation_minutes: arrivalTime,
@@ -97,7 +104,8 @@ export default function StoreDetailPage() {
         if (error) throw error
 
         console.log('✅ チェックイン成功:', data)
-        router.push(`/status/${data.id}`)
+        const statusPath = locale === 'zh-TW' ? `/status/${data.id}` : `/${locale}/status/${data.id}`
+        router.push(statusPath)
       } catch (error) {
         console.error('❌ チェックインエラー:', error)
         alert(t('checkInFailed'))
@@ -176,6 +184,22 @@ export default function StoreDetailPage() {
             </div>
           </div>
         </Card>
+
+        {waitlist.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold text-gray-700 mb-3">
+              {t('waitingPlayers')}
+            </h2>
+            <div className="space-y-2">
+              {waitlist.map((entry, index) => (
+                <div key={entry.id} className="flex items-center gap-3 bg-white rounded-lg p-3 shadow-sm border border-gray-100">
+                  <span className="text-lg font-bold text-blue-600 w-8">#{index + 1}</span>
+                  <span className="font-medium text-gray-800">{entry.user_name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div>
           <Input

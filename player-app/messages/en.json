@@ -44,7 +44,8 @@
     "playerName": "Player Name",
     "playerNamePlaceholder": "Enter your name",
     "playerNameRequired": "Please enter player name",
-    "playerNameTooLong": "Name must be {max} characters or less"
+    "playerNameTooLong": "Name must be {max} characters or less",
+    "waitingPlayers": "Waiting Players"
   },
   "status": {
     "title": "My Status",
@@ -58,6 +59,7 @@
     "notificationEnabled": "LINE notification: Enabled",
     "cancelButton": "Cancel",
     "cancelSuccess": "Canceled",
+    "qrHint": "My QR Code",
     "called": {
       "title": "Your turn!",
       "message": "Please go to the store"
@@ -77,6 +79,14 @@
     "greenDescription": "🟢 Seats Available: You can be seated immediately",
     "yellowDescription": "🟡 Short Wait: 3 or fewer people waiting",
     "redDescription": "🔴 Crowded: 4 or more people waiting"
+  },
+  "qr": {
+    "title": "My QR Code",
+    "description": "Show this QR code to staff to join the waitlist",
+    "yourName": "Your Name",
+    "namePlaceholder": "Enter your name",
+    "saveName": "Save Name",
+    "nameSaved": "Saved"
   },
   "language": {
     "select": "Select Language",
