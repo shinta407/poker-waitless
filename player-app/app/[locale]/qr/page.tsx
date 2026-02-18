@@ -1,15 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { PlayerQRCode } from '@/components/ui/PlayerQRCode'
 import { getPlayerName, savePlayerName } from '@/lib/playerProfile'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { IconButton } from '@/components/ui/IconButton'
 
 export default function QRPage() {
+  const router = useRouter()
   const t = useTranslations('qr')
+  const tCommon = useTranslations('common')
   const [name, setName] = useState('')
   const [saved, setSaved] = useState(false)
 
@@ -27,7 +31,20 @@ export default function QRPage() {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-sm mx-auto space-y-6">
         <Card padding="lg">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('title')}</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <IconButton
+              icon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              }
+              onClick={() => router.back()}
+              aria-label={tCommon('back')}
+              variant="default"
+              size="md"
+            />
+            <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
+          </div>
           <p className="text-gray-600 text-sm mb-4">{t('description')}</p>
           <PlayerQRCode size={220} />
         </Card>
