@@ -28,7 +28,7 @@ export function Header({ showMockMode = false }: HeaderProps) {
         <div className="flex items-center gap-2">
           <Link
             href={qrPath}
-            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+            className="inline-flex items-center justify-center p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
             aria-label="QR Code"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
