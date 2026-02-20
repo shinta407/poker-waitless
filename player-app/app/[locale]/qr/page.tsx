@@ -15,16 +15,24 @@ export default function QRPage() {
   const t = useTranslations('qr')
   const tCommon = useTranslations('common')
   const [name, setName] = useState('')
+  const [savedName, setSavedName] = useState('')
+  const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    setName(getPlayerName())
+    const stored = getPlayerName()
+    setName(stored)
+    setSavedName(stored)
   }, [])
 
   const handleSave = () => {
-    savePlayerName(name.trim())
+    const trimmed = name.trim()
+    setSaving(true)
+    savePlayerName(trimmed)
+    setSavedName(trimmed)
+    setSaving(false)
     setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    setTimeout(() => setSaved(false), 3000)
   }
 
   return (
@@ -44,9 +52,17 @@ export default function QRPage() {
               size="md"
             />
             <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
+            {savedName && (
+              <span className="ml-auto text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-full">
+                {t('qrActive')}
+              </span>
+            )}
           </div>
           <p className="text-gray-600 text-sm mb-4">{t('description')}</p>
-          <PlayerQRCode size={220} />
+          <PlayerQRCode name={savedName} size={220} />
+          {!savedName && (
+            <p className="text-center text-xs text-amber-600 mt-2">{t('nameRequired')}</p>
+          )}
         </Card>
 
         <Card padding="lg">
@@ -62,9 +78,9 @@ export default function QRPage() {
               variant="primary"
               size="lg"
               fullWidth
-              disabled={!name.trim()}
+              disabled={!name.trim() || saving}
             >
-              {saved ? t('nameSaved') : t('saveName')}
+              {saving ? t('registering') : saved ? t('nameSaved') : t('saveName')}
             </Button>
           </div>
         </Card>

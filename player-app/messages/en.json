@@ -86,7 +86,11 @@
     "yourName": "Your Name",
     "namePlaceholder": "Enter your name",
     "saveName": "Save Name",
-    "nameSaved": "Saved"
+    "nameSaved": "Saved",
+    "nameRequired": "Enter name to activate QR code",
+    "qrActive": "QR Active ✓",
+    "registering": "Saving...",
+    "registerFailed": "Failed to save"
   },
   "language": {
     "select": "Select Language",

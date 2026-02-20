@@ -386,37 +386,26 @@ export default function AdminPage() {
     }
   }
 
-  const handleQRScan = async (userId: string) => {
+  const handleQRScan = async (userId: string, name: string) => {
     try {
       if (USE_MOCK_DATA) {
-        // Mock: Find user by ID and add to waitlist
-        toast.success(tToast('qrScanSuccess'))
+        toast.success(tToast('playerAdded', { name }))
       } else {
         if (!storeId) throw new Error('Store ID not set')
 
-        // Fetch user info from Supabase
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', userId)
-          .single()
-
-        if (userError) throw userError
-
-        // Add to waitlist
         const { error: insertError } = await supabase
           .from('waitlist')
           .insert({
             store_id: storeId,
             user_id: userId,
-            user_name: userData.name,
-            rate_preference: selectedBuyIn, // Use current selected buy-in
+            user_name: name,
+            rate_preference: selectedBuyIn,
             status: 'waiting',
           })
 
         if (insertError) throw insertError
 
-        toast.success(tToast('playerAdded', { name: userData.name }))
+        toast.success(tToast('playerAdded', { name }))
       }
     } catch (error) {
       console.error('Error scanning QR:', error)

@@ -86,7 +86,11 @@
     "yourName": "あなたの名前",
     "namePlaceholder": "名前を入力してください",
     "saveName": "名前を保存",
-    "nameSaved": "保存しました"
+    "nameSaved": "保存しました",
+    "nameRequired": "名前を入力してQRコードを有効化",
+    "qrActive": "QR 有効 ✓",
+    "registering": "保存中...",
+    "registerFailed": "保存に失敗しました"
   },
   "language": {
     "select": "言語を選択",

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { QrCode, AlertCircle } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -16,7 +16,7 @@ if (typeof window !== 'undefined') {
 export interface QRScanModalProps {
   isOpen: boolean
   onClose: () => void
-  onScanSuccess: (userId: string) => Promise<void>
+  onScanSuccess: (userId: string, name: string) => Promise<void>
 }
 
 export function QRScanModal({ isOpen, onClose, onScanSuccess }: QRScanModalProps) {
@@ -25,9 +25,64 @@ export function QRScanModal({ isOpen, onClose, onScanSuccess }: QRScanModalProps
   const scannerRef = useRef<any>(null)
   const hasStartedRef = useRef(false)
 
+  const startScanner = useCallback(async () => {
+    if (!Html5Qrcode || hasStartedRef.current) return
+    hasStartedRef.current = true
+
+    try {
+      setIsScanning(true)
+      setError('')
+
+      const scanner = new Html5Qrcode('qr-reader')
+      scannerRef.current = scanner
+
+      await scanner.start(
+        { facingMode: 'environment' },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+        },
+        async (decodedText: string) => {
+          try {
+            // Parse new format: tpds://player/{userId}?name={encodedName}
+            const withoutPrefix = decodedText.replace('tpds://player/', '')
+            const [userId, queryString] = withoutPrefix.split('?')
+            const params = new URLSearchParams(queryString || '')
+            const nameParam = params.get('name')
+            const name = nameParam ? decodeURIComponent(nameParam) : ''
+
+            if (!userId || userId === decodedText) {
+              throw new Error('無効なQRコード形式です')
+            }
+            if (!name) {
+              throw new Error('プレイヤーが名前を登録していません。プレイヤーアプリで名前を保存してください。')
+            }
+
+            // Stop scanner before processing
+            await scanner.stop()
+            scannerRef.current = null
+
+            await onScanSuccess(userId, name)
+            onClose()
+          } catch (err) {
+            console.error('Error processing QR code:', err)
+            setError(err instanceof Error ? err.message : 'QRコードの処理に失敗しました')
+            setIsScanning(false)
+          }
+        },
+        () => {
+          // Frame error callback - ignore
+        }
+      )
+    } catch (err) {
+      console.error('Error starting camera:', err)
+      setError('カメラにアクセスできません。ブラウザの設定を確認してください。')
+      setIsScanning(false)
+    }
+  }, [onScanSuccess, onClose])
+
   useEffect(() => {
     if (!isOpen) {
-      // Cleanup scanner when modal closes
       if (scannerRef.current) {
         scannerRef.current
           .stop()
@@ -40,60 +95,6 @@ export function QRScanModal({ isOpen, onClose, onScanSuccess }: QRScanModalProps
       return
     }
 
-    // Start scanner when modal opens
-    if (!Html5Qrcode || hasStartedRef.current) return
-    hasStartedRef.current = true
-
-    const startScanner = async () => {
-      try {
-        setIsScanning(true)
-        setError('')
-
-        const scanner = new Html5Qrcode('qr-reader')
-        scannerRef.current = scanner
-
-        await scanner.start(
-          { facingMode: 'environment' }, // Use back camera on iPad
-          {
-            fps: 10, // 10 frames per second
-            qrbox: { width: 250, height: 250 }, // Scan area
-          },
-          async (decodedText: string) => {
-            // Success callback
-            try {
-              // Parse the QR code format: tpds://player/{userId}
-              const userId = decodedText.replace('tpds://player/', '')
-
-              if (!userId || userId === decodedText) {
-                throw new Error('無効なQRコード形式です')
-              }
-
-              // Stop scanner before processing
-              await scanner.stop()
-              scannerRef.current = null
-
-              // Process the scan
-              await onScanSuccess(userId)
-
-              // Close modal
-              onClose()
-            } catch (err) {
-              console.error('Error processing QR code:', err)
-              setError('QRコードの処理に失敗しました')
-              setIsScanning(false)
-            }
-          },
-          () => {
-            // Error callback for frame errors - ignore these
-          }
-        )
-      } catch (err) {
-        console.error('Error starting camera:', err)
-        setError('カメラにアクセスできません。ブラウザの設定を確認してください。')
-        setIsScanning(false)
-      }
-    }
-
     startScanner()
 
     return () => {
@@ -104,7 +105,7 @@ export function QRScanModal({ isOpen, onClose, onScanSuccess }: QRScanModalProps
         scannerRef.current = null
       }
     }
-  }, [isOpen, onScanSuccess, onClose])
+  }, [isOpen, startScanner])
 
   const handleClose = () => {
     if (scannerRef.current) {
@@ -114,6 +115,22 @@ export function QRScanModal({ isOpen, onClose, onScanSuccess }: QRScanModalProps
       scannerRef.current = null
     }
     onClose()
+  }
+
+  const handleRescan = async () => {
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop()
+      } catch {}
+      scannerRef.current = null
+    }
+    hasStartedRef.current = false
+    setError('')
+    setIsScanning(false)
+    // Small delay to allow DOM to reset before restarting
+    setTimeout(() => {
+      startScanner()
+    }, 100)
   }
 
   return (
@@ -162,12 +179,22 @@ export function QRScanModal({ isOpen, onClose, onScanSuccess }: QRScanModalProps
         )}
 
         {/* Actions */}
-        <div className="pt-2">
+        <div className="pt-2 flex gap-3">
+          {error && (
+            <Button
+              variant="primary"
+              size="large"
+              onClick={handleRescan}
+              className="flex-1"
+            >
+              再スキャン
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="large"
             onClick={handleClose}
-            className="w-full"
+            className={error ? 'flex-1' : 'w-full'}
           >
             キャンセル
           </Button>

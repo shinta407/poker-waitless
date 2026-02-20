@@ -86,7 +86,11 @@
     "yourName": "您的名稱",
     "namePlaceholder": "請輸入您的名稱",
     "saveName": "儲存名稱",
-    "nameSaved": "已儲存"
+    "nameSaved": "已儲存",
+    "nameRequired": "輸入名稱以啟用QR碼",
+    "qrActive": "QR 已啟用 ✓",
+    "registering": "儲存中...",
+    "registerFailed": "儲存失敗"
   },
   "language": {
     "select": "選擇語言",
