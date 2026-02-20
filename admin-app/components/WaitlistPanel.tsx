@@ -173,6 +173,7 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
 
   const bgColor = () => {
     if (isBlinking) return 'bg-red-500 animate-pulse'
+    if (player.status === 'arrived') return 'bg-green-50 border-l-4 border-green-500'
     if (player.status === 'called') return 'bg-amber-50 border-l-4 border-amber-500'
     return 'bg-white'
   }
@@ -199,13 +200,23 @@ function PlayerCard({ player, position, onCallPlayer, onSeatPlayer, onDeletePlay
               {player.user_name}
             </h3>
             <p className="text-lg text-gray-600 mt-1">
-              {t('arrivalTime', { time: getEstimatedArrival() })}
+              {player.status === 'arrived'
+                ? t('arrived')
+                : t('arrivalTime', { time: getEstimatedArrival() })}
             </p>
           </div>
         </div>
 
         {/* Status Badge */}
         <div className="flex items-center gap-2">
+          {player.status === 'arrived' && (
+            <span
+              className="text-lg font-semibold px-4 py-2 rounded-lg bg-green-600 text-white"
+              role="status"
+            >
+              {t('arrived')}
+            </span>
+          )}
           {player.status === 'called' && (
             <span
               className={`

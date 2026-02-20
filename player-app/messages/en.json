@@ -31,20 +31,11 @@
     "estimatedWait": "Estimated wait: {time} min",
     "estimatedWaitRange": "{min}-{max} min",
     "minutesLater": "{minutes} min later",
-    "arrivalTime": "Arrival Time",
+    "arrivalTime": "Estimated Arrival Time",
+    "arrivalTimePlaceholder": "Select arrival time",
     "checkIn": "Check In",
     "checkInFailed": "Check-in failed",
     "storeInfo": "📍 {city} | 🕐 {hours}",
-    "arrivalOptions": {
-      "15min": "15 min",
-      "30min": "30 min",
-      "45min": "45 min",
-      "60min": "1 hour"
-    },
-    "playerName": "Player Name",
-    "playerNamePlaceholder": "Enter your name",
-    "playerNameRequired": "Please enter player name",
-    "playerNameTooLong": "Name must be {max} characters or less",
     "waitingPlayers": "Waiting Players"
   },
   "status": {

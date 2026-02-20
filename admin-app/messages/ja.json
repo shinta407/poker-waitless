@@ -79,6 +79,7 @@
     "deletePlayer": "プレイヤーを削除",
     "deleteConfirm": "このプレイヤーを待機リストから削除しますか?",
     "selectTableFor": "{name}さんのテーブルを選択",
+    "arrived": "到着済み",
     "playerInfo": "プレイヤー",
     "preferredBuyIn": "希望買入額: {amount}"
   },
@@ -115,6 +116,8 @@
     "deleteFailed": "削除に失敗しました",
     "addFailed": "プレイヤー追加に失敗しました",
     "updateFailed": "座席数の更新に失敗しました",
+    "playerArrived": "{name}さんの到着を確認しました",
+    "playerNotFound": "待機リストにエントリが見つかりません",
     "qrScanSuccess": "QRスキャン成功（デモモード）",
     "qrScanFailed": "QRスキャンに失敗しました",
     "statsLoadFailed": "統計情報の読み込みに失敗しました",

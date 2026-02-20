@@ -26,7 +26,7 @@ export interface WaitlistEntry {
   user_id: string
   user_name: string
   rate_preference: string | null
-  status: 'waiting' | 'called' | 'seated' | 'cancelled'
+  status: 'waiting' | 'called' | 'arrived' | 'seated' | 'cancelled'
   called_at: string | null
   arrival_estimation_minutes: number | null
   created_at: string

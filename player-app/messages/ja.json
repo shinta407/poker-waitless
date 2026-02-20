@@ -31,20 +31,11 @@
     "estimatedWait": "予測待ち時間: {time}分",
     "estimatedWaitRange": "{min}-{max}分",
     "minutesLater": "{minutes}分後",
-    "arrivalTime": "到着時間",
+    "arrivalTime": "到着予定時刻",
+    "arrivalTimePlaceholder": "到着予定の時刻を選択",
     "checkIn": "チェックイン",
     "checkInFailed": "チェックインに失敗しました",
     "storeInfo": "📍 {city} | 🕐 {hours}",
-    "arrivalOptions": {
-      "15min": "15分後",
-      "30min": "30分後",
-      "45min": "45分後",
-      "60min": "1時間後"
-    },
-    "playerName": "プレイヤー名",
-    "playerNamePlaceholder": "お名前を入力してください",
-    "playerNameRequired": "プレイヤー名を入力してください",
-    "playerNameTooLong": "名前は{max}文字以内で入力してください",
     "waitingPlayers": "待機中のプレイヤー"
   },
   "status": {

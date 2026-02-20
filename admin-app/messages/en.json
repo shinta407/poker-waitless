@@ -79,6 +79,7 @@
     "deletePlayer": "Delete Player",
     "deleteConfirm": "Remove this player from the waitlist?",
     "selectTableFor": "Select table for {name}",
+    "arrived": "Arrived",
     "playerInfo": "Player",
     "preferredBuyIn": "Preferred buy-in: {amount}"
   },
@@ -115,6 +116,8 @@
     "deleteFailed": "Failed to delete",
     "addFailed": "Failed to add player",
     "updateFailed": "Failed to update seats",
+    "playerArrived": "{name} has arrived",
+    "playerNotFound": "No waitlist entry found",
     "qrScanSuccess": "QR scan successful (demo mode)",
     "qrScanFailed": "QR scan failed",
     "statsLoadFailed": "Failed to load statistics",

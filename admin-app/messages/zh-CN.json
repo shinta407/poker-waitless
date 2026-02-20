@@ -79,6 +79,7 @@
     "deletePlayer": "删除玩家",
     "deleteConfirm": "确定要从等待名单中删除此玩家吗？",
     "selectTableFor": "为{name}选择桌次",
+    "arrived": "已到达",
     "playerInfo": "玩家",
     "preferredBuyIn": "希望买入额：{amount}"
   },
@@ -115,6 +116,8 @@
     "deleteFailed": "删除失败",
     "addFailed": "添加玩家失败",
     "updateFailed": "更新座位数失败",
+    "playerArrived": "{name}已确认到达",
+    "playerNotFound": "找不到等待名单中的记录",
     "qrScanSuccess": "QR扫描成功（演示模式）",
     "qrScanFailed": "QR扫描失败",
     "statsLoadFailed": "统计信息加载失败",

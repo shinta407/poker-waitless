@@ -112,7 +112,7 @@ export default function AdminPage() {
         .select('*')
         .eq('store_id', store)
         .eq('rate_preference', rate)
-        .in('status', ['waiting', 'called']) // Exclude seated and cancelled
+        .in('status', ['waiting', 'called', 'arrived']) // Exclude seated and cancelled
 
       if (waitlistError) {
         console.error('Waitlist error:', waitlistError)
@@ -152,8 +152,8 @@ export default function AdminPage() {
                 return prev.filter(w => w.id !== payload.old?.id)
               } else if (payload.eventType === 'INSERT') {
                 const newEntry = payload.new as WaitlistEntry
-                // Only show waiting or called players
-                if (newEntry.status === 'waiting' || newEntry.status === 'called') {
+                // Only show waiting, called, or arrived players
+                if (newEntry.status === 'waiting' || newEntry.status === 'called' || newEntry.status === 'arrived') {
                   return [...prev, newEntry]
                 }
                 return prev
@@ -389,23 +389,26 @@ export default function AdminPage() {
   const handleQRScan = async (userId: string, name: string) => {
     try {
       if (USE_MOCK_DATA) {
-        toast.success(tToast('playerAdded', { name }))
+        toast.success(tToast('playerArrived', { name }))
       } else {
         if (!storeId) throw new Error('Store ID not set')
 
-        const { error: insertError } = await supabase
+        const { data, error: updateError } = await supabase
           .from('waitlist')
-          .insert({
-            store_id: storeId,
-            user_id: userId,
-            user_name: name,
-            rate_preference: selectedBuyIn,
-            status: 'waiting',
-          })
+          .update({ status: 'arrived' })
+          .eq('user_id', userId)
+          .eq('store_id', storeId)
+          .in('status', ['waiting', 'called'])
+          .select()
 
-        if (insertError) throw insertError
+        if (updateError) throw updateError
 
-        toast.success(tToast('playerAdded', { name }))
+        if (!data || data.length === 0) {
+          toast.error(tToast('playerNotFound'))
+          return
+        }
+
+        toast.success(tToast('playerArrived', { name }))
       }
     } catch (error) {
       console.error('Error scanning QR:', error)

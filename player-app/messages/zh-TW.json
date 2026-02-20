@@ -31,20 +31,11 @@
     "estimatedWait": "預估等候時間：{time}分鐘",
     "estimatedWaitRange": "{min}-{max}分鐘",
     "minutesLater": "{minutes}分鐘後",
-    "arrivalTime": "抵達時間",
+    "arrivalTime": "預計抵達時間",
+    "arrivalTimePlaceholder": "選擇抵達時間",
     "checkIn": "報到",
     "checkInFailed": "報到失敗",
     "storeInfo": "📍 {city} | 🕐 {hours}",
-    "arrivalOptions": {
-      "15min": "15分鐘後",
-      "30min": "30分鐘後",
-      "45min": "45分鐘後",
-      "60min": "1小時後"
-    },
-    "playerName": "玩家名稱",
-    "playerNamePlaceholder": "請輸入您的名稱",
-    "playerNameRequired": "請輸入玩家名稱",
-    "playerNameTooLong": "名稱最多{max}個字",
     "waitingPlayers": "等候中的玩家"
   },
   "status": {

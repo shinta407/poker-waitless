@@ -6,12 +6,38 @@ import { useTranslations, useLocale } from 'next-intl'
 import type { WaitlistEntry } from '@/lib/types'
 import { useRealtimeStore } from '@/hooks/useRealtimeStore'
 import { supabase } from '@/lib/supabase'
-import { getPlayerId, savePlayerName } from '@/lib/playerProfile'
+import { getPlayerId, getPlayerName, savePlayerName } from '@/lib/playerProfile'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Loader } from '@/components/ui/Loader'
 import { IconButton } from '@/components/ui/IconButton'
-import { Input } from '@/components/ui/Input'
+
+function getDefaultArrivalTime(): string {
+  const now = new Date()
+  const future = new Date(now.getTime() + 30 * 60000)
+  // Round up to next 5-minute mark
+  const minutes = future.getMinutes()
+  const remainder = minutes % 5
+  if (remainder !== 0) {
+    future.setMinutes(minutes + (5 - remainder))
+  }
+  future.setSeconds(0, 0)
+  const hh = String(future.getHours()).padStart(2, '0')
+  const mm = String(future.getMinutes()).padStart(2, '0')
+  return `${hh}:${mm}`
+}
+
+function getArrivalMinutesFromNow(timeStr: string): number {
+  const [hours, minutes] = timeStr.split(':').map(Number)
+  const now = new Date()
+  const target = new Date()
+  target.setHours(hours, minutes, 0, 0)
+  // If target is before now, assume next day
+  if (target.getTime() <= now.getTime()) {
+    target.setDate(target.getDate() + 1)
+  }
+  return Math.max(1, Math.round((target.getTime() - now.getTime()) / 60000))
+}
 
 export default function StoreDetailPage() {
   const params = useParams()
@@ -22,11 +48,17 @@ export default function StoreDetailPage() {
   const storeId = params.storeId as string
 
   const [selectedRate, setSelectedRate] = useState<string>('')
-  const [arrivalTime, setArrivalTime] = useState<number>(15)
-  const [playerName, setPlayerName] = useState<string>('')
-  const [playerNameError, setPlayerNameError] = useState<string>('')
+  const [arrivalTime, setArrivalTime] = useState<string>(getDefaultArrivalTime())
 
   const { store, waitlist, loading } = useRealtimeStore(storeId, selectedRate)
+
+  // Redirect to QR page if no player name is registered
+  useEffect(() => {
+    const name = getPlayerName()
+    if (!name) {
+      router.replace(`/${locale}/qr`)
+    }
+  }, [router, locale])
 
   useEffect(() => {
     if (store && !selectedRate) {
@@ -34,38 +66,15 @@ export default function StoreDetailPage() {
     }
   }, [store, selectedRate])
 
-  const MAX_PLAYER_NAME_LENGTH = 20
-
-  const validatePlayerName = (name: string): string => {
-    const trimmedName = name.trim()
-    if (!trimmedName) {
-      return t('playerNameRequired')
-    }
-    if (trimmedName.length > MAX_PLAYER_NAME_LENGTH) {
-      return t('playerNameTooLong', { max: MAX_PLAYER_NAME_LENGTH })
-    }
-    return ''
-  }
-
-  const handlePlayerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setPlayerName(value)
-    if (playerNameError) {
-      setPlayerNameError('')
-    }
-  }
-
   const handleCheckIn = async () => {
-    // Validate player name
-    const error = validatePlayerName(playerName)
-    if (error) {
-      setPlayerNameError(error)
+    const playerName = getPlayerName()
+    if (!playerName) {
+      router.replace(`/${locale}/qr`)
       return
     }
 
-    const trimmedPlayerName = playerName.trim()
     const userId = getPlayerId()
-    savePlayerName(trimmedPlayerName)
+    const arrivalMinutes = getArrivalMinutesFromNow(arrivalTime)
     const useMockMode = process.env.NEXT_PUBLIC_USE_MOCK_MODE === 'true'
 
     if (useMockMode) {
@@ -73,11 +82,11 @@ export default function StoreDetailPage() {
         id: `wait-${Date.now()}`,
         store_id: storeId,
         user_id: userId,
-        user_name: trimmedPlayerName,
+        user_name: playerName,
         rate_preference: selectedRate,
         status: 'waiting',
         called_at: null,
-        arrival_estimation_minutes: arrivalTime,
+        arrival_estimation_minutes: arrivalMinutes,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }
@@ -86,16 +95,16 @@ export default function StoreDetailPage() {
       router.push(mockStatusPath)
     } else {
       try {
-        await supabase.from('users').upsert({ id: userId, name: trimmedPlayerName })
+        await supabase.from('users').upsert({ id: userId, name: playerName })
 
         const { data, error } = await supabase
           .from('waitlist')
           .insert({
             store_id: storeId,
             user_id: userId,
-            user_name: trimmedPlayerName,
+            user_name: playerName,
             rate_preference: selectedRate,
-            arrival_estimation_minutes: arrivalTime,
+            arrival_estimation_minutes: arrivalMinutes,
             status: 'waiting',
           })
           .select()
@@ -120,13 +129,6 @@ export default function StoreDetailPage() {
   const waitingCount = waitlist.length
   const minWait = waitingCount * 15
   const maxWait = waitingCount * 30
-
-  const arrivalOptions = [
-    { minutes: 15, key: '15min' as const },
-    { minutes: 30, key: '30min' as const },
-    { minutes: 45, key: '45min' as const },
-    { minutes: 60, key: '60min' as const }
-  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -202,39 +204,21 @@ export default function StoreDetailPage() {
         )}
 
         <div>
-          <Input
-            label={t('playerName')}
-            placeholder={t('playerNamePlaceholder')}
-            value={playerName}
-            onChange={handlePlayerNameChange}
-            error={playerNameError}
-            maxLength={MAX_PLAYER_NAME_LENGTH}
-            aria-required="true"
-          />
-        </div>
-
-        <div>
           <h2 className="text-lg font-bold text-gray-700 mb-3">
             {t('arrivalTime')}
           </h2>
-          <div className="grid grid-cols-2 gap-3">
-            {arrivalOptions.map(({ minutes, key }) => (
-              <Button
-                key={minutes}
-                onClick={() => setArrivalTime(minutes)}
-                variant={arrivalTime === minutes ? 'primary' : 'secondary'}
-                size="lg"
-                aria-label={`${t('arrivalTime')}: ${t(`arrivalOptions.${key}`)}`}
-              >
-                {t(`arrivalOptions.${key}`)}
-              </Button>
-            ))}
-          </div>
+          <input
+            type="time"
+            value={arrivalTime}
+            onChange={(e) => setArrivalTime(e.target.value)}
+            className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none bg-white"
+            aria-label={t('arrivalTimePlaceholder')}
+          />
         </div>
 
         <Button
           onClick={handleCheckIn}
-          disabled={!selectedRate || !playerName.trim()}
+          disabled={!selectedRate}
           variant="primary"
           size="xl"
           fullWidth
