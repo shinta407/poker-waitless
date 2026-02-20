@@ -27,6 +27,7 @@ export default function QRPage() {
 
   const handleSave = () => {
     const trimmed = name.trim()
+    console.log('[QR] handleSave called, name:', JSON.stringify(name), 'trimmed:', JSON.stringify(trimmed))
     setSaving(true)
     savePlayerName(trimmed)
     setSavedName(trimmed)
@@ -34,6 +35,8 @@ export default function QRPage() {
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
   }
+
+  console.log('[QR] render - savedName:', JSON.stringify(savedName), 'name:', JSON.stringify(name))
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
