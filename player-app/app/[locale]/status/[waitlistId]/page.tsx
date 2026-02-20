@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { useMyWaitlistEntry } from '@/hooks/useMyWaitlistEntry'
@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Loader } from '@/components/ui/Loader'
 import { PlayerQRCode } from '@/components/ui/PlayerQRCode'
+import { getPlayerName } from '@/lib/playerProfile'
 
 export default function StatusPage() {
   const params = useParams()
@@ -18,6 +19,11 @@ export default function StatusPage() {
   const locale = useLocale()
   const waitlistId = params.waitlistId as string
   const [cancelling, setCancelling] = useState(false)
+  const [playerName, setPlayerName] = useState('')
+
+  useEffect(() => {
+    setPlayerName(getPlayerName() || '')
+  }, [])
 
   const { entry, store, position, loading } = useMyWaitlistEntry(waitlistId)
 
@@ -120,7 +126,7 @@ export default function StatusPage() {
 
         <Card padding="lg">
           <div className="text-center text-sm text-gray-500 mb-2">{t('qrHint')}</div>
-          <PlayerQRCode size={160} />
+          <PlayerQRCode name={entry.user_name || playerName} size={160} />
         </Card>
 
         <Button

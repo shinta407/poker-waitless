@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { QrCode, AlertCircle } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
+import { supabase } from '@/lib/supabase'
 
 // Import html5-qrcode dynamically to avoid SSR issues
 let Html5Qrcode: any = null
@@ -49,11 +50,22 @@ export function QRScanModal({ isOpen, onClose, onScanSuccess }: QRScanModalProps
             const [userId, queryString] = withoutPrefix.split('?')
             const params = new URLSearchParams(queryString || '')
             const nameParam = params.get('name')
-            const name = nameParam ? decodeURIComponent(nameParam) : ''
+            let name = nameParam ? decodeURIComponent(nameParam) : ''
 
             if (!userId || userId === decodedText) {
               throw new Error('無効なQRコード形式です')
             }
+
+            // If name is not in QR code, look up from database
+            if (!name) {
+              const { data: userData } = await supabase
+                .from('users')
+                .select('name')
+                .eq('id', userId)
+                .single()
+              name = userData?.name || ''
+            }
+
             if (!name) {
               throw new Error('プレイヤーが名前を登録していません。プレイヤーアプリで名前を保存してください。')
             }
