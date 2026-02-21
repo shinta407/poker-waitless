@@ -263,21 +263,7 @@ export default function AdminPage() {
       try {
         console.log('🔄 Seating player:', playerId, 'to table:', tableId)
 
-        // Update player status to seated
-        const { data: playerData, error: updateError } = await supabase
-          .from('waitlist')
-          .update({ status: 'seated' })
-          .eq('id', playerId)
-          .select()
-
-        if (updateError) {
-          console.error('❌ Error updating waitlist:', updateError)
-          throw updateError
-        }
-
-        console.log('✅ Updated waitlist:', playerData)
-
-        // Atomic increment of table seats
+        // Atomic increment of table seats first (more likely to fail due to constraints)
         console.log('🔄 Incrementing table seats:', tableId)
         const { data: tableData, error: tableError } = await supabase
           .rpc('increment_table_seats', { table_id: tableId, delta: 1 })
@@ -288,12 +274,28 @@ export default function AdminPage() {
         }
         console.log('✅ Updated table:', tableData)
 
+        // Update player status to seated
+        const { data: playerData, error: updateError } = await supabase
+          .from('waitlist')
+          .update({ status: 'seated' })
+          .eq('id', playerId)
+          .select()
+
+        if (updateError) {
+          console.error('❌ Error updating waitlist:', updateError)
+          // Rollback table seat increment
+          await supabase.rpc('increment_table_seats', { table_id: tableId, delta: -1 })
+          throw updateError
+        }
+
+        console.log('✅ Updated waitlist:', playerData)
         console.log('✅ Player seated:', playerId)
         const player = waitlist.find(p => p.id === playerId)
         toast.success(tToast('playerSeated', { name: player?.user_name || '' }))
       } catch (err) {
         console.error('❌ Error seating player:', err)
         toast.error(t('toast.seatFailed'))
+        throw err
       }
     }
   }
