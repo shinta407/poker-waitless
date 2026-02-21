@@ -1,9 +1,30 @@
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+export const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Ensure the player has an authenticated session (anonymous sign-in).
+// Must be called before any write operations to satisfy RLS policies.
+let authInitPromise: Promise<void> | null = null
+
+export function ensureAuth(): Promise<void> {
+  if (authInitPromise) return authInitPromise
+
+  authInitPromise = (async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      const { error } = await supabase.auth.signInAnonymously()
+      if (error) {
+        console.error('Anonymous sign-in failed:', error.message)
+        authInitPromise = null
+      }
+    }
+  })()
+
+  return authInitPromise
+}
 
 // Mock user for development (before LIFF integration)
 export const getMockUser = () => ({

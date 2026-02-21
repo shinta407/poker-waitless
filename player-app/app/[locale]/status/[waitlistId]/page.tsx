@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { useMyWaitlistEntry } from '@/hooks/useMyWaitlistEntry'
-import { supabase } from '@/lib/supabase'
+import { supabase, ensureAuth } from '@/lib/supabase'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Loader } from '@/components/ui/Loader'
 import { PlayerQRCode } from '@/components/ui/PlayerQRCode'
-import { getPlayerName } from '@/lib/playerProfile'
+import { getPlayerName, getPlayerId } from '@/lib/playerProfile'
 
 export default function StatusPage() {
   const params = useParams()
@@ -41,10 +41,12 @@ export default function StatusPage() {
       router.push(mapPath)
     } else {
       try {
+        await ensureAuth()
         const { error } = await supabase
           .from('waitlist')
           .update({ status: 'cancelled' })
           .eq('id', waitlistId)
+          .eq('user_id', getPlayerId())
 
         if (error) throw error
 

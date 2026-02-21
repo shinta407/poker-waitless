@@ -26,9 +26,11 @@ export default function QRPage() {
   }, [])
 
   const handleSave = () => {
-    const trimmed = name.trim()
+    const trimmed = name.trim().slice(0, 50).replace(/[\x00-\x1F\x7F\u200B-\u200F\u2028-\u202F\uFEFF]/g, '')
+    if (!trimmed) return
     setSaving(true)
     savePlayerName(trimmed)
+    setName(trimmed)
     setSavedName(trimmed)
     setSaving(false)
     setSaved(true)
@@ -72,6 +74,7 @@ export default function QRPage() {
               placeholder={t('namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
+              maxLength={50}
             />
             <Button
               onClick={handleSave}

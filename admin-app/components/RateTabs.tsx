@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Settings } from 'lucide-react'
+import { Settings, LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface RateTabsProps {
@@ -10,9 +10,10 @@ interface RateTabsProps {
   onRateChange: (rate: string) => void
   storeName: string
   onOpenSettings?: () => void
+  onLogout?: () => void
 }
 
-export default function RateTabs({ rates, selectedRate, onRateChange, storeName, onOpenSettings }: RateTabsProps) {
+export default function RateTabs({ rates, selectedRate, onRateChange, storeName, onOpenSettings, onLogout }: RateTabsProps) {
   const t = useTranslations()
   const tCommon = useTranslations('common')
   const tSettings = useTranslations('settings')
@@ -90,6 +91,15 @@ export default function RateTabs({ rates, selectedRate, onRateChange, storeName,
             className="p-3 rounded-lg hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
           >
             <Settings className="w-6 h-6 text-gray-700" aria-hidden="true" />
+          </button>
+        )}
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            aria-label="ログアウト"
+            className="p-3 rounded-lg hover:bg-red-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+          >
+            <LogOut className="w-6 h-6 text-gray-500 hover:text-red-600" aria-hidden="true" />
           </button>
         )}
       </div>

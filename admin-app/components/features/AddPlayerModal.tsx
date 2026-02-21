@@ -29,15 +29,19 @@ export function AddPlayerModal({
     e.preventDefault()
     setError('')
 
-    if (!name.trim()) {
+    const trimmed = name.trim().slice(0, 50)
+    // Strip control characters
+    const sanitized = trimmed.replace(/[\x00-\x1F\x7F\u200B-\u200F\u2028-\u202F\uFEFF]/g, '')
+    if (!sanitized) {
       setError('プレイヤー名を入力してください')
       return
     }
+    setName(sanitized)
 
     setLoading(true)
 
     try {
-      await onSubmit(name.trim(), rate)
+      await onSubmit(sanitized, rate)
       // Reset form
       setName('')
       setRate(defaultRate || rates[0])
@@ -84,6 +88,7 @@ export function AddPlayerModal({
             onChange={(e) => setName(e.target.value)}
             autoFocus
             required
+            maxLength={50}
             aria-required="true"
             aria-invalid={!!error}
             aria-describedby={error ? 'name-error' : undefined}

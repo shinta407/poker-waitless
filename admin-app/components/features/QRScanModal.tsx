@@ -45,14 +45,20 @@ export function QRScanModal({ isOpen, onClose, onScanSuccess }: QRScanModalProps
         },
         async (decodedText: string) => {
           try {
-            // Parse new format: tpds://player/{userId}?name={encodedName}
-            const withoutPrefix = decodedText.replace('tpds://player/', '')
+            const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+            const QR_PREFIX = 'tpds://player/'
+
+            if (!decodedText.startsWith(QR_PREFIX)) {
+              throw new Error('無効なQRコード形式です')
+            }
+
+            const withoutPrefix = decodedText.slice(QR_PREFIX.length)
             const [userId, queryString] = withoutPrefix.split('?')
             const params = new URLSearchParams(queryString || '')
             const nameParam = params.get('name')
             let name = nameParam ? decodeURIComponent(nameParam) : ''
 
-            if (!userId || userId === decodedText) {
+            if (!userId || !UUID_REGEX.test(userId)) {
               throw new Error('無効なQRコード形式です')
             }
 

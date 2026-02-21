@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import type { WaitlistEntry } from '@/lib/types'
 import { useRealtimeStore } from '@/hooks/useRealtimeStore'
-import { supabase } from '@/lib/supabase'
+import { supabase, ensureAuth } from '@/lib/supabase'
 import { getPlayerId, getPlayerName, savePlayerName } from '@/lib/playerProfile'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -95,6 +95,25 @@ export default function StoreDetailPage() {
       router.push(mockStatusPath)
     } else {
       try {
+        await ensureAuth()
+
+        // Check for existing active entry
+        const { data: existing } = await supabase
+          .from('waitlist')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('store_id', storeId)
+          .in('status', ['waiting', 'called', 'arrived'])
+          .limit(1)
+          .single()
+
+        if (existing) {
+          // Already checked in - redirect to status page
+          const statusPath = locale === 'zh-TW' ? `/status/${existing.id}` : `/${locale}/status/${existing.id}`
+          router.push(statusPath)
+          return
+        }
+
         await supabase.from('users').upsert({ id: userId, name: playerName })
 
         const { data, error } = await supabase

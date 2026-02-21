@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Theater, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { type WaitlistEntry, type Table, supabase } from '@/lib/supabase'
@@ -18,6 +19,7 @@ import { useToast } from '@/hooks/useToast'
 const USE_MOCK_DATA = false
 
 export default function AdminPage() {
+  const router = useRouter()
   const [buyIns, setBuyIns] = useState<string[]>([]) // NT$ format buy-in amounts
   const [selectedBuyIn, setSelectedBuyIn] = useState<string>('')
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>([])
@@ -272,22 +274,16 @@ export default function AdminPage() {
 
         console.log('✅ Updated waitlist:', playerData)
 
-        // Increment the selected table
-        const selectedTable = tables.find(t => t.id === tableId)
-        if (selectedTable) {
-          console.log('🔄 Incrementing table seats:', tableId)
-          const { data: tableData, error: tableError } = await supabase
-            .from('tables')
-            .update({ current_players: selectedTable.current_players + 1 })
-            .eq('id', tableId)
-            .select()
+        // Atomic increment of table seats
+        console.log('🔄 Incrementing table seats:', tableId)
+        const { data: tableData, error: tableError } = await supabase
+          .rpc('increment_table_seats', { table_id: tableId, delta: 1 })
 
-          if (tableError) {
-            console.error('❌ Error updating table:', tableError)
-            throw tableError
-          }
-          console.log('✅ Updated table:', tableData)
+        if (tableError) {
+          console.error('❌ Error updating table:', tableError)
+          throw tableError
         }
+        console.log('✅ Updated table:', tableData)
 
         console.log('✅ Player seated:', playerId)
         const player = waitlist.find(p => p.id === playerId)
@@ -312,27 +308,17 @@ export default function AdminPage() {
       toast.success(t('toast.seatsUpdated'))
     } else {
       try {
-        const table = tables.find(t => t.id === tableId)
-        if (!table) {
-          console.error('❌ Table not found:', tableId)
-          return
-        }
-
-        const newCount = Math.max(0, Math.min(table.max_seats, table.current_players + increment))
-        console.log('🔄 Updating table:', { tableId, newCount, currentPlayers: table.current_players })
+        console.log('🔄 Updating table seats:', { tableId, increment })
 
         const { data, error } = await supabase
-          .from('tables')
-          .update({ current_players: newCount })
-          .eq('id', tableId)
-          .select()
+          .rpc('increment_table_seats', { table_id: tableId, delta: increment })
 
         if (error) {
-          console.error('❌ Supabase UPDATE error:', error)
+          console.error('❌ Supabase RPC error:', error)
           throw error
         }
 
-        console.log('✅ Seats updated:', { tableId, newCount, response: data })
+        console.log('✅ Seats updated:', data)
         toast.success(t('toast.seatsUpdated'))
       } catch (err) {
         console.error('❌ Error updating seats:', err)
@@ -347,9 +333,9 @@ export default function AdminPage() {
         // Mock implementation
         const now = new Date().toISOString()
         const newPlayer: WaitlistEntry = {
-          id: `mock-${Date.now()}`,
+          id: crypto.randomUUID(),
           store_id: storeId || 'mock-store',
-          user_id: `manual-${Date.now()}`,
+          user_id: crypto.randomUUID(),
           user_name: name,
           rate_preference: rate,
           status: 'waiting',
@@ -368,7 +354,7 @@ export default function AdminPage() {
           .from('waitlist')
           .insert({
             store_id: storeId,
-            user_id: `manual-${Date.now()}`,
+            user_id: crypto.randomUUID(),
             user_name: name,
             rate_preference: rate,
             status: 'waiting',
@@ -456,6 +442,12 @@ export default function AdminPage() {
     }
   }
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
+
   return (
     <div className="h-screen w-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Mock Mode / Loading / Error Banner */}
@@ -491,6 +483,7 @@ export default function AdminPage() {
         onRateChange={setSelectedBuyIn}
         storeName={storeName}
         onOpenSettings={() => setSettingsModalOpen(true)}
+        onLogout={handleLogout}
       />
 
       {/* Main Content: 60/40 Split - Responsive */}

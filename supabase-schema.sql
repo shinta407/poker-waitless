@@ -39,12 +39,22 @@ CREATE TABLE IF NOT EXISTS waitlist (
   user_id VARCHAR(255) NOT NULL, -- LINE ID
   user_name VARCHAR(255) NOT NULL,
   rate_preference VARCHAR(50), -- "1/3", "2/5" etc.
-  status VARCHAR(20) NOT NULL DEFAULT 'waiting', -- 'waiting', 'called', 'seated', 'cancelled'
+  status VARCHAR(20) NOT NULL DEFAULT 'waiting', -- 'waiting', 'called', 'arrived', 'seated', 'cancelled'
   called_at TIMESTAMP WITH TIME ZONE,
   arrival_estimation_minutes INTEGER,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  CONSTRAINT check_status CHECK (status IN ('waiting', 'called', 'seated', 'cancelled'))
+  CONSTRAINT check_status CHECK (status IN ('waiting', 'called', 'arrived', 'seated', 'cancelled'))
+);
+
+-- ============================================
+-- 4. users (プレイヤー) テーブル
+-- ============================================
+CREATE TABLE IF NOT EXISTS users (
+  id VARCHAR(255) PRIMARY KEY, -- Player UUID from client
+  name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- ============================================
@@ -84,52 +94,90 @@ CREATE TRIGGER update_waitlist_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER update_users_updated_at
+  BEFORE UPDATE ON users
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================
+-- Atomic seat count update function
+-- ============================================
+CREATE OR REPLACE FUNCTION increment_table_seats(
+  table_id UUID,
+  delta INTEGER
+)
+RETURNS tables AS $$
+DECLARE
+  result tables;
+BEGIN
+  UPDATE tables
+  SET current_players = GREATEST(0, LEAST(max_seats, current_players + delta))
+  WHERE id = table_id
+  RETURNING * INTO result;
+  RETURN result;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- ============================================
 -- Enable Row Level Security (RLS)
 -- ============================================
 ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tables ENABLE ROW LEVEL SECURITY;
 ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
 -- ============================================
--- RLS Policies (基本的なポリシー - 必要に応じて調整)
+-- RLS Policies
 -- ============================================
 
--- stores: 全員が読み取り可能、認証ユーザーが更新可能
-CREATE POLICY "Enable read access for all users" ON stores
+-- stores: 全員が読み取り可能、認証ユーザーが書き込み可能
+CREATE POLICY "stores_select" ON stores
   FOR SELECT USING (true);
 
-CREATE POLICY "Enable insert for authenticated users only" ON stores
+CREATE POLICY "stores_insert" ON stores
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
-CREATE POLICY "Enable update for authenticated users only" ON stores
+CREATE POLICY "stores_update" ON stores
   FOR UPDATE USING (auth.role() = 'authenticated');
 
--- tables: 全員が読み取り可能、認証ユーザーが更新可能
-CREATE POLICY "Enable read access for all users" ON tables
-  FOR SELECT USING (true);
-
-CREATE POLICY "Enable insert for authenticated users only" ON tables
-  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-
-CREATE POLICY "Enable update for authenticated users only" ON tables
-  FOR UPDATE USING (auth.role() = 'authenticated');
-
-CREATE POLICY "Enable delete for authenticated users only" ON tables
+CREATE POLICY "stores_delete" ON stores
   FOR DELETE USING (auth.role() = 'authenticated');
 
--- waitlist: 全員が読み取り可能、認証ユーザーが更新可能
-CREATE POLICY "Enable read access for all users" ON waitlist
+-- tables: 全員が読み取り可能、認証ユーザーが書き込み可能
+CREATE POLICY "tables_select" ON tables
   FOR SELECT USING (true);
 
-CREATE POLICY "Enable insert for authenticated users only" ON waitlist
+CREATE POLICY "tables_insert" ON tables
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
-CREATE POLICY "Enable update for authenticated users only" ON waitlist
+CREATE POLICY "tables_update" ON tables
   FOR UPDATE USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Enable delete for authenticated users only" ON waitlist
+CREATE POLICY "tables_delete" ON tables
   FOR DELETE USING (auth.role() = 'authenticated');
+
+-- waitlist: 全員が読み取り可能、認証ユーザーが書き込み可能
+CREATE POLICY "waitlist_select" ON waitlist
+  FOR SELECT USING (true);
+
+CREATE POLICY "waitlist_insert" ON waitlist
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "waitlist_update" ON waitlist
+  FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "waitlist_delete" ON waitlist
+  FOR DELETE USING (auth.role() = 'authenticated');
+
+-- users: 全員が読み取り可能、認証ユーザーが書き込み可能
+CREATE POLICY "users_select" ON users
+  FOR SELECT USING (true);
+
+CREATE POLICY "users_insert" ON users
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "users_update" ON users
+  FOR UPDATE USING (auth.role() = 'authenticated');
 
 -- ============================================
 -- Sample data (テスト用 - オプション)
