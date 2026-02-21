@@ -8,15 +8,17 @@ import { Badge } from '@/components/ui/Badge'
 
 interface StoreCardProps {
   store: StoreWithStatus
+  selectedRate?: string
 }
 
-export default function StoreCard({ store }: StoreCardProps) {
+export default function StoreCard({ store, selectedRate }: StoreCardProps) {
   const router = useRouter()
   const t = useTranslations('map.status')
   const tStore = useTranslations('store')
 
   const handleClick = () => {
-    router.push(`/store/${store.id}`)
+    const rateParam = selectedRate && selectedRate !== 'all' ? `?rate=${selectedRate}` : ''
+    router.push(`/store/${store.id}${rateParam}`)
   }
 
   const waitingCount = store.waitlist.filter(w => w.status === 'waiting').length

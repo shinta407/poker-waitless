@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import type { WaitlistEntry } from '@/lib/types'
 import { useRealtimeStore } from '@/hooks/useRealtimeStore'
@@ -42,10 +42,12 @@ function getArrivalMinutesFromNow(timeStr: string): number {
 export default function StoreDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const t = useTranslations('store')
   const tCommon = useTranslations('common')
   const locale = useLocale()
   const storeId = params.storeId as string
+  const rateFromUrl = searchParams.get('rate')
 
   const [selectedRate, setSelectedRate] = useState<string>('')
   const [arrivalTime, setArrivalTime] = useState<string>(getDefaultArrivalTime())
@@ -62,9 +64,13 @@ export default function StoreDetailPage() {
 
   useEffect(() => {
     if (store && !selectedRate) {
-      setSelectedRate(store.rates[0])
+      if (rateFromUrl && store.rates.includes(rateFromUrl)) {
+        setSelectedRate(rateFromUrl)
+      } else {
+        setSelectedRate(store.rates[0])
+      }
     }
-  }, [store, selectedRate])
+  }, [store, selectedRate, rateFromUrl])
 
   const handleCheckIn = async () => {
     const playerName = getPlayerName()

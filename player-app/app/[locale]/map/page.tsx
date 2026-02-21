@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import MapView from '@/components/map/MapView'
 import StoreCard from '@/components/map/StoreCard'
 import { useRealtimeStores } from '@/hooks/useRealtimeStores'
@@ -10,6 +11,8 @@ import { Button } from '@/components/ui/Button'
 import { Loader } from '@/components/ui/Loader'
 
 export default function MapPage() {
+  const router = useRouter()
+  const locale = useLocale()
   const t = useTranslations('map')
   const tCommon = useTranslations('common')
   const { stores, loading } = useRealtimeStores()
@@ -91,14 +94,17 @@ export default function MapPage() {
         <div className="h-96 rounded-lg overflow-hidden mb-4">
           <MapView
             stores={filteredStores}
-            onStoreClick={(storeId) => window.location.href = `/store/${storeId}`}
+            onStoreClick={(storeId) => {
+              const rateParam = selectedRate !== 'all' ? `?rate=${selectedRate}` : ''
+              router.push(`/${locale}/store/${storeId}${rateParam}`)
+            }}
           />
         </div>
 
         <div className="space-y-3">
           <h2 className="text-lg font-bold text-gray-700">{t('storeList')}</h2>
           {filteredStores.map(store => (
-            <StoreCard key={store.id} store={store} />
+            <StoreCard key={store.id} store={store} selectedRate={selectedRate} />
           ))}
 
           {filteredStores.length === 0 && (
