@@ -86,15 +86,17 @@ export default function AdminPage() {
     if (!storeId || !selectedBuyIn) return
 
     let isMounted = true
+    let cleanup: (() => void) | undefined
 
     const initializeData = async () => {
-      await loadSupabaseData(storeId, selectedBuyIn, isMounted)
+      cleanup = await loadSupabaseData(storeId, selectedBuyIn, isMounted)
     }
 
     initializeData()
 
     return () => {
       isMounted = false
+      cleanup?.()
     }
   }, [selectedBuyIn, storeId])
 
@@ -186,6 +188,7 @@ export default function AdminPage() {
               if (payload.eventType === 'DELETE') {
                 return prev.filter(t => t.id !== payload.old?.id)
               } else if (payload.eventType === 'INSERT') {
+                if (prev.some(t => t.id === (payload.new as Table).id)) return prev
                 return [...prev, payload.new as Table]
               } else {
                 return prev.map(t => t.id === payload.new?.id ? payload.new as Table : t)

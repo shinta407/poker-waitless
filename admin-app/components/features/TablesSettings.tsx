@@ -71,7 +71,10 @@ export function TablesSettings({ storeId, buyIns }: TablesSettingsProps) {
           if (payload.eventType === 'DELETE') {
             setTables((prev) => prev.filter((t) => t.id !== payload.old?.id))
           } else if (payload.eventType === 'INSERT') {
-            setTables((prev) => [...prev, payload.new as Table])
+            setTables((prev) => {
+              if (prev.some((t) => t.id === (payload.new as Table).id)) return prev
+              return [...prev, payload.new as Table]
+            })
           } else if (payload.eventType === 'UPDATE') {
             setTables((prev) =>
               prev.map((t) => (t.id === payload.new?.id ? (payload.new as Table) : t))

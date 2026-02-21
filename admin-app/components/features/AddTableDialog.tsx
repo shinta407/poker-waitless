@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { type Table } from '@/lib/supabase'
@@ -29,6 +29,7 @@ export function AddTableDialog({
   const [status, setStatus] = useState<'open' | 'closed'>('open')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const submittingRef = useRef(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -42,6 +43,7 @@ export function AddTableDialog({
         setStatus('open')
       }
       setError('')
+      submittingRef.current = false
     }
   }, [isOpen, mode, initialTable, initialBuyIn, buyIns])
 
@@ -58,6 +60,7 @@ export function AddTableDialog({
   }
 
   const handleSubmit = async () => {
+    if (submittingRef.current) return
     const validationError = validateForm()
     if (validationError) {
       setError(validationError)
@@ -65,6 +68,7 @@ export function AddTableDialog({
     }
 
     try {
+      submittingRef.current = true
       setLoading(true)
       setError('')
       await onSubmit({
@@ -78,6 +82,7 @@ export function AddTableDialog({
       console.error('Error submitting table:', err)
       setError(err instanceof Error ? err.message : '保存に失敗しました')
     } finally {
+      submittingRef.current = false
       setLoading(false)
     }
   }
