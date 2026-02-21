@@ -263,32 +263,40 @@ export default function AdminPage() {
       try {
         console.log('🔄 Seating player:', playerId, 'to table:', tableId)
 
-        // Atomic increment of table seats first (more likely to fail due to constraints)
-        console.log('🔄 Incrementing table seats:', tableId)
-        const { data: tableData, error: tableError } = await supabase
-          .rpc('increment_table_seats', { table_id: tableId, delta: 1 })
+        // Get current table data for safe increment
+        const table = tables.find(t => t.id === tableId)
+        if (!table) throw new Error('Table not found')
+
+        const newCount = Math.min(table.max_seats, table.current_players + 1)
+
+        // Update table seat count directly (avoids RPC GRANT issues)
+        const { error: tableError } = await supabase
+          .from('tables')
+          .update({ current_players: newCount })
+          .eq('id', tableId)
 
         if (tableError) {
           console.error('❌ Error updating table:', tableError)
           throw tableError
         }
-        console.log('✅ Updated table:', tableData)
+        console.log('✅ Updated table seats:', newCount)
 
         // Update player status to seated
-        const { data: playerData, error: updateError } = await supabase
+        const { error: updateError } = await supabase
           .from('waitlist')
           .update({ status: 'seated' })
           .eq('id', playerId)
-          .select()
 
         if (updateError) {
           console.error('❌ Error updating waitlist:', updateError)
-          // Rollback table seat increment
-          await supabase.rpc('increment_table_seats', { table_id: tableId, delta: -1 })
+          // Rollback table seat count
+          await supabase
+            .from('tables')
+            .update({ current_players: table.current_players })
+            .eq('id', tableId)
           throw updateError
         }
 
-        console.log('✅ Updated waitlist:', playerData)
         console.log('✅ Player seated:', playerId)
         const player = waitlist.find(p => p.id === playerId)
         toast.success(tToast('playerSeated', { name: player?.user_name || '' }))
@@ -315,15 +323,22 @@ export default function AdminPage() {
       try {
         console.log('🔄 Updating table seats:', { tableId, increment })
 
-        const { data, error } = await supabase
-          .rpc('increment_table_seats', { table_id: tableId, delta: increment })
+        const table = tables.find(t => t.id === tableId)
+        if (!table) throw new Error('Table not found')
+
+        const newCount = Math.max(0, Math.min(table.max_seats, table.current_players + increment))
+
+        const { error } = await supabase
+          .from('tables')
+          .update({ current_players: newCount })
+          .eq('id', tableId)
 
         if (error) {
-          console.error('❌ Supabase RPC error:', error)
+          console.error('❌ Supabase update error:', error)
           throw error
         }
 
-        console.log('✅ Seats updated:', data)
+        console.log('✅ Seats updated:', newCount)
         toast.success(t('toast.seatsUpdated'))
       } catch (err) {
         console.error('❌ Error updating seats:', err)
